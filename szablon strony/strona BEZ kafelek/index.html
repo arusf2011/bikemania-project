@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=iso-8859-2" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Bikemania </title>
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+	
+	<script src="jquery-1.12.3.min.js"></script>
+	
+	<script>
+
+$(document).ready(function() {
+   var stickyNavTop = $('#menu').offset().top;
+
+   var stickyNav = function(){
+   var scrollTop = $(window).scrollTop();
+
+   if (scrollTop > stickyNavTop) { 
+      $('#menu').addClass('sticky');
+   } else {
+      $('#menu').removeClass('sticky');
+    }
+   };
+
+   stickyNav();
+
+   $(window).scroll(function() {
+      stickyNav();
+   });
+   });
+
+</script>
+
+	<center>
+		<div id="logo"><a href="index.html" style="color: #ffffff; text-decoration: none;">Bikemania <i class="icon-bicycle"></a></i></div>
+	</center>
+	
+	<div id="menu">
+		<a href="index.html" title="Strona Główna"><div id="nav"><i class="icon-home"></i></div></a>
+		<a href="rezerwacje.html" title="Rezerwacje"><div class="option">Rezerwacje</div></a>
+		<a href="cennik.html" title="Cennik"><div class="option">Cennik</div></a>
+		<a href="serwis.html" title="Serwis"><div class="option">Serwis</div></a>
+		<a href="harmonogram.html" title="Harmonogram"><div class="option">Harmonogram</div></a>
+		<a href="kontakt.html" title="Kontakt"><div class="option">Kontakt</div></a>
+	</div>
+
+	
+	
+	<div id="content">
+		
+		<div class="info">
+			
+			<h1>O nas</h1>
+		
+			Nasza wypożyczalnia oferuje bogaty wybór rowerów w niskich cenach. Nasi pracownicy chętnie Tobie pomog± w wyborze odpowiedniego modelu oraz wypełni± wszystkie formalno¶ci.
+			
+			
+			
+		</div>
+		
+		<div class="info">
+			
+			<h1>Łatwo do nas trafić</h1>
+			
+			Jeste¶my w samym centrum Gliwic na wydziale Matematyki Stosowanej Politechniki ¦l±skiej.</br>
+			Po więcej informacji przejdĽ na zakładkę <a href="kontakt.html" style="color: #982f2f; text-decoration: none;">KONTAKT</a>
+			
+			</br></br>
+			
+			<img src="img/ms.jpg">
+		
+			
+			
+		</div>
+		
+		
+	</div>
+	
+		<div id="footer">Bikemania 2021 &copy </div>
+		
+</body>
+</html>
