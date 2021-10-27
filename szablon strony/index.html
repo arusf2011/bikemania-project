@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=iso-8859-2" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Bikemania </title>
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+
+		<script src="jquery-1.12.3.min.js"></script>
+	
+	<script>
+
+$(document).ready(function() {
+   var stickyNavTop = $('#menu').offset().top;
+
+   var stickyNav = function(){
+   var scrollTop = $(window).scrollTop();
+
+   if (scrollTop > stickyNavTop) { 
+      $('#menu').addClass('sticky');
+   } else {
+      $('#menu').removeClass('sticky');
+    }
+   };
+
+   stickyNav();
+
+   $(window).scroll(function() {
+      stickyNav();
+   });
+   });
+
+	</script>
+
+	
+	<center>
+		<div id="logo">Bikemania <i class="icon-bicycle"></i></div>
+	</center>
+	
+
+	
+	
+	<div id="contentmain">
+		
+		<a href="rezerwacje.html"><div class="tile">
+			
+			<div id="tile1">
+				<div class="clicker">REZERWACJE</div>
+			</div>
+			
+		</div></a>
+		
+		<a href="cennik.html"><div class="tile">
+		
+			<div id="tile2">
+				<div class="clicker">CENNIK</div>
+			</div>
+			
+		</div></a>
+		
+		<a href="serwis.html"><div class="tile">
+		
+			<div id="tile3">
+				<div class="clicker">SERWIS</div>
+			</div>
+			
+		</div></a>
+		
+		<a href="harmonogram.html"><div class="tile">
+			
+			<div id="tile4">
+				<div class="clicker">HARMONOGRAM</div>
+			</div>
+			
+		</div></a>
+		
+		<a href="kontakt.html"><div class="tile">
+			
+			<div id="tile5">
+				<div class="clicker">KONTAKT</div>
+			</div>
+			
+		</div></a>
+		
+
+	</div>
+	
+		
+</body>
+</html>
