@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=iso-8859-2" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Bikemania </title>
+  
+  <link rel="stylesheet" href="style.css" type="text/css"/>
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+	
+	<script src="jquery-1.12.3.min.js"></script>
+	
+	<script>
+
+$(document).ready(function() {
+   var stickyNavTop = $('#menu').offset().top;
+
+   var stickyNav = function(){
+   var scrollTop = $(window).scrollTop();
+
+   if (scrollTop > stickyNavTop) { 
+      $('#menu').addClass('sticky');
+   } else {
+      $('#menu').removeClass('sticky');
+    }
+   };
+
+   stickyNav();
+
+   $(window).scroll(function() {
+      stickyNav();
+   });
+   });
+   
+   function mobileMenu() {
+  var x = document.getElementById("links");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+
+	</script>
+
+	
+	
+	<center>
+		<div id="logo"><a href="index.html" style="color: #ffffff; text-decoration: none;">Bikemania <i class="icon-bicycle"></a></i></div>
+	</center>
+		
+	
+	
+	<div id="menu">
+		<a href="index.html" title="Tu jesteś"><div id="nav"><i class="icon-home"></i></div></a>
+		<a href="aktualnosci.html" title="Aktualności"><div class="option">Aktualności</div></a>
+		<a href="rezerwacje.html" title="Rezerwacje"><div class="option">Rezerwacje</div></a>
+		<a href="cennik.html" title="Cennik"><div class="option">Cennik</div></a>
+		<a href="serwis.html" title="Serwis"><div class="option">Serwis</div></a>
+		<a href="kontakt.html" title="Kontakt"><div class="option">Kontakt</div></a>
+	</div>
+	
+	<div class="mobilemenu">
+		
+		<a href="index.html" style="font-family: 'Fredoka One', cursive; color: #ffffff; text-decoration: none;">Bikemania</a>
+	
+		<div id="links">
+			<a href="index.html" title="Strona Główna">Strona Główna</a>
+			<a href="aktualnosci.html" title="Aktualności">Aktualności</a>
+			<a href="rezerwacje.html" title="Rezerwacje">Rezerwacje</a>
+			<a href="cennik.html" title="Cennik">Cennik</a>
+			<a href="serwis.html" title="Serwis">Serwis</a>
+			<a href="kontakt.html" title="Kontakt">Kontakt</a>
+		</div>
+		
+		
+		
+		<a href="javascript:void(0);" class="icon" onclick="mobileMenu()">
+		<i class="fa fa-bars"></i>
+		</a>
+		
+	</div>
+
+	
+	
+	<div id="content">
+	
+	
+		
+		<div class="info">
+			
+			<h1>O nas</h1>
+		
+			Nasza wypożyczalnia oferuje bogaty wybór rowerów w niskich cenach. Nasi pracownicy chętnie Tobie pomogą w wyborze odpowiedniego modelu oraz wypełnią wszystkie formalności.
+			
+			
+			
+		</div>
+		
+		<div class="info">
+			
+			<h1>Łatwo do nas trafić</h1>
+			
+			Jesteśmy w samym centrum Gliwic na wydziale Matematyki Stosowanej Politechniki Śląskiej.</br>
+			Po więcej informacji przejdź na zakładkę <a href="kontakt.html" style="color: #982f2f; text-decoration: none;">KONTAKT</a>
+			
+			</br></br>
+			
+			<img src="img/ms.jpg">
+		
+			
+			
+		</div>
+		
+		
+	</div>
+	
+		<div id="footer">Bikemania 2021 &copy </div>
+		
+</body>
+</html>
