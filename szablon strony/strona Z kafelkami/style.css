@@ -1,0 +1,197 @@
+body
+{
+	background-color: #FFFFFF;
+	font-size: 20px;
+	color: FFFFFF;
+	font-family: 'Noto Sans', sans-serif;
+	margin: 0;
+	text-align: justify;
+}
+
+#logo
+{
+	color: #982f2f;
+	text-align: center;
+	width: 400px;
+	font-size: 60px;
+	padding: 20px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	font-family: 'Fredoka One', cursive;
+	display: inline-block;
+}
+
+#menu
+{
+	width: 100%;
+	background-color: #982f2f;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.option
+{
+	background-color: #982f2f;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 23px;
+	padding: 7px 10px;
+}
+
+.option:hover
+{
+	cursor: pointer;
+	background-color: #db3c3c;
+	color: #FFFFFF;
+}
+
+#nav
+{
+	background-color: #982f2f;
+	color: #454545;
+	display: inline-block;
+	font-size: 23px;
+	padding: 7px 5px;
+}
+
+#nav:hover
+{
+	cursor: pointer;
+	background-color: #db3c3c;
+}
+
+#content
+{
+	width: 80%;
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 60px 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+#contentmain
+{
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 60px 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.tile
+{
+	
+	margin-left: 2px;
+	margin-right: 2px;
+	display: inline-block;
+	position: relative;
+}
+
+#tile1
+{
+	width: 400px;
+	height: 400px;
+	background-image: url("img/rezerwacje.jpg");
+}
+
+#tile2
+{
+	width: 400px;
+	height: 400px;
+	background-image: url("img/cennik.jpg");
+}
+
+#tile3
+{
+	width: 400px;
+	height: 400px;
+	background-image: url("img/serwis.png");
+}
+
+#tile4
+{
+	width: 400px;
+	height: 400px;
+	background-image: url("img/harmonogram.jpg");
+}
+
+#tile5
+{
+	width: 400px;
+	height: 400px;
+	background-image: url("img/kontakt.jpg");
+}
+
+.contactinfo
+{
+	width: 450px;
+	height: 380px;
+	margin: auto;
+	display: inline-block;
+	text-align: center;
+}
+
+.openhours
+{
+	width: 130px;
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
+	text-align: left;
+}
+
+#map
+{
+	width: 700px;
+	margin-bottom: 50px;
+	text-align: center;
+}
+
+.clicker
+{
+	width: 250px;
+	line-height: 60px;
+	height: 60px;
+	background: #ffffff;
+	color: #982f2f;
+	font-size: 25px;
+	font-weight: bold;
+	opacity: 0.9;
+	text-align: center;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#footer
+{
+	font-size: 23px;
+	color: #982f2f;
+	padding: 30px 0;
+	font-family: 'Noto Sans', sans-serif;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	border-top: 2px solid #982f2f;
+}
+
+.sticky
+{
+	box-shadow: 0px 3px 70px -5px rgba(0,0,0,0.75);
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 150px;
+	z-index: 100;
+}
+
+
+
