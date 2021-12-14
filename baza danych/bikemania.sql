@@ -27,7 +27,7 @@ CREATE TABLE `promocje` (
   `rodzaj_promocji` varchar(25) NOT NULL,
   `cena_znizki` float unsigned NOT NULL,
   PRIMARY KEY (`id_promocji`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,7 +51,7 @@ CREATE TABLE `rowery` (
   `model` varchar(25) NOT NULL,
   `cena_wynajmu` float unsigned NOT NULL,
   PRIMARY KEY (`id_roweru`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `uzytkownicy` (
   `pesel` int DEFAULT NULL,
   `numer_dowodu_osobistego` varchar(9) DEFAULT NULL,
   PRIMARY KEY (`id_uzytkownika`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,7 +112,7 @@ CREATE TABLE `wypozyczenia` (
   CONSTRAINT `wypozyczenia_ibfk_1` FOREIGN KEY (`id_roweru`) REFERENCES `rowery` (`id_roweru`),
   CONSTRAINT `wypozyczenia_ibfk_2` FOREIGN KEY (`id_uzytkownika`) REFERENCES `uzytkownicy` (`id_uzytkownika`),
   CONSTRAINT `wypozyczenia_ibfk_3` FOREIGN KEY (`id_promocji`) REFERENCES `promocje` (`id_promocji`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
