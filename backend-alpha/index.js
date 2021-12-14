@@ -20,6 +20,14 @@ app.use(session({
 }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+const pool = mariadb.createPool({
+    host: 'xxxxx',
+    user: 'xxxxx',
+    password: 'xxxxx',
+    database: 'xxxxx',
+    port: 00000,
+    rowsAsArray: true
+});
 // Po inicjacji przechodzę do generowania widoków stron
 app.get('/', (req,res) => {
     res.render('pages/index');
