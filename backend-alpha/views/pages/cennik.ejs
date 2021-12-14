@@ -1,0 +1,365 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf8" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Cennik - Bikemania </title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css"/>
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+	
+	<script src="js/jquery-1.12.3.min.js"></script>
+	
+	<script>
+
+$(document).ready(function() {
+   var stickyNavTop = $('#menu').offset().top;
+
+   var stickyNav = function(){
+   var scrollTop = $(window).scrollTop();
+
+   if (scrollTop > stickyNavTop) { 
+      $('#menu').addClass('sticky');
+   } else {
+      $('#menu').removeClass('sticky');
+    }
+   };
+
+   stickyNav();
+
+   $(window).scroll(function() {
+      stickyNav();
+   });
+   });
+   
+   function mobileMenu() {
+  var x = document.getElementById("links");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+
+	</script>
+
+	
+	
+	<center>
+		<div id="logo"><a href="/" style="color: #ffffff; text-decoration: none;">Bikemania <img src="img/logo.png" width="100"></div>
+	</center>
+		
+	
+	
+	<div id="menu">
+		<a href="/" title="Strona Główna"><div id="nav"><i class="icon-home"></i></div></a>
+		<a href="/aktualnosci" title="Aktualności"><div class="option">Aktualności</div></a>
+		<a href="/rezerwacje" title="Rezerwacje"><div class="option">Rezerwacje</div></a>
+		<a href="/cennik" title="Tu jesteś"><div class="optionactive">Cennik</div></a>
+		<a href="/serwis" title="Serwis"><div class="option">Serwis</div></a>
+		<a href="/kontakt" title="Kontakt"><div class="option">Kontakt</div></a>
+	</div>
+	
+	<div class="mobilemenu">
+		
+		<a href="/" style="font-family: 'Fredoka One', cursive; color: #ffffff; text-decoration: none;">Bikemania</a>
+	
+		<div id="links">
+			<a href="/" title="Strona G��wna">Strona Główna</a>
+			<a href="/aktualnosci" title="Aktualności">Aktualności</a>
+			<a href="/rezerwacje" title="Rezerwacje">Rezerwacje</a>
+			<a href="/cennik" title="Cennik">Cennik</a>
+			<a href="/serwis" title="Serwis">Serwis</a>
+			<a href="/kontakt" title="Kontakt">Kontakt</a>
+		</div>
+		
+		
+		
+		<a href="javascript:void(0);" class="icon" onclick="mobileMenu()">
+		<i class="fa fa-bars"></i>
+		</a>
+		
+	</div>
+	
+	
+	<div id="content">
+		
+		
+	<div class="contentblock_wide">
+		
+		<h1 style="color: #7dad2c;">CENNIK WYPOŻYCZALNI</h1>
+		
+		<ul>
+			<li>Przy wypożyczaniu roweru możesz wykupić ubezpieczenie, które uchroni wypożyczającego od pokrycia naprawy roweru, w przypadku uszkodzenia podczas użytkowania. Opłata wynosi 50 zł.</li>
+			<li>Jeżeli jesteś uczniem/studentem  możesz uzyskać 15% zniżki na wypożyczane rowery w naszej wypożyczalni. Wystarczy, że przy wypożyczaniu okażesz odpowiedni dokument.</li>
+			<li>Kara za kradzież/utratę/zniszczenie roweru 2000 zł + 5% wartości roweru.</li>
+		</ul>
+		
+		
+	</div>
+	
+	<table style="width:80%">
+		<tr>
+			<th colspan="3">CAŁY DZIEŃ</th>
+		</tr>
+		<tr>
+			<td>ROWER ELEKTRYCZNY</td>
+			<td>ROWER SZOSOWY/MIEJSKI</td>
+			<td>ROWER DZIECIĘCY</td>
+		</tr>
+		<tr>
+			<td>60 zł</td>
+			<td>120 zł</td>
+			<td>30 zł</td>
+		</tr>
+	</table>
+	
+	
+	<table style="width:100%">
+		<tr>
+			<th colspan="4">CENNIK CZASOWY</th>
+		</tr>
+		<tr>
+			<td>CZAS</td>
+			<td>ROWER ELEKTRYCZNY</td>
+			<td>ROWER SZOSOWY / MIEJSKI</td>
+			<td>ROWER DZIECIĘCY</td>
+		</tr>
+		<tr>
+		<td>do 15 min</td>
+			<td>0 zł</td>
+			<td>0 zł</td>
+			<td>0 zł</td>
+		</tr>
+		<tr>
+			<td>od 15 min do 60 min</td>
+			<td>10 zł</td>
+			<td>5 zł</td>
+			<td>3 zł</td>
+		</tr>
+		<tr>
+			<td>2 godziny</td>
+			<td>17 zł</td>
+			<td>9 zł</td>
+			<td>6 zł</td>
+		</tr>
+		<tr>
+			<td>3 godziny</td>
+			<td>24 zł</td>
+			<td>13 zł</td>
+			<td>8 zł</td>
+		</tr>
+		<tr>
+			<td>każda następna godzina</td>
+			<td>7 zł</td>
+			<td>5 zł</td>
+			<td>2 zł</td>
+		</tr>
+	</table>
+	
+	
+	<table style="width:100%">
+		<tr>
+			<th colspan="4">CENNIK KILOMETROWY</th>
+		</tr>
+		<tr>
+			<td>ODLEGŁOŚĆ</td>
+			<td>ROWER ELEKTRYCZNY</td>
+			<td>ROWER SZOSOWY / MIEJSKI</td>
+			<td>ROWER DZIECIĘCY</td>
+		</tr>
+		<tr>
+		<td>do 5 km</td>
+			<td>20 zł</td>
+			<td>16 zł</td>
+			<td>12 zł</td>
+		</tr>
+		<tr>
+			<td>do 10 km</td>
+			<td>30 zł</td>
+			<td>20 zł</td>
+			<td>12 zł</td>
+		</tr>
+		<tr>
+			<td>każdy kolejny kilometr</td>
+			<td>1 zł</td>
+			<td>80 gr</td>
+			<td>40 gr</td>
+		</tr>
+	</table>
+	
+		
+	
+	<div class="contentblock_wide">
+			
+			<h4>ABONAMENTY</h4>
+			W wielu miastach nie znajdziemy długoterminowych opcji abonamentowych. Nasza wypożyczalnia postanowiła wzbogacić swoją ofertę o takie abonamenty. Już teraz możesz wykupić długoterminowy abonament na użytkowanie naszych rowerów. Aktualnie klienci mogą wybierać spośród dwóch opcji.
+		
+	</div>
+	
+	
+	<table style="width:80%">
+		<tr>
+			<th>RODZAJ ABONAMENTU</th>
+			<th>ROWER ELEKTRYCZNY</th>
+			<th>ROWER MIEJSKI</th>
+		</tr>
+		<tr>
+			<td>MIESIĘCZNY: pozwala na maksymalnie 2 wynajęcia roweru dziennie, z których każde trwa nie dłużej niż jedną godzinę. Abonament jest ważny przez jeden miesiąc kalendarzowy od daty zakupu.</td>
+			<td>350 zł</td>
+			<td>125 zł</td>
+		</tr>
+		<tr>
+			<td>TRZYMIESIĘCZNY: pozwala na maksymalnie 2 wynajęcia roweru dziennie, z których każde trwa nie dłużej niż jedną godzinę. Abonament jest ważny przez trzy miesiące kalendarzowe od daty zakupu.</td>
+			<td>500 zł</td>
+			<td>250 zł</td>
+		</tr>
+	</table>
+	
+	
+	
+	
+	
+	
+	<div id="cennik_serwisu"></div>
+	<div class="contentblock_wide">
+		
+		<h1 style="color: #7dad2c;">CENNIK SERWISU</h1>
+		
+		<ul>
+			<li>W przypadku nieodebrania roweru w wyznaczonym terminie, za każdy dzień zwłoki doliczana do rachunku zostaje dodatkowa opłata w wysokości 5zł za dzień.</li>
+		</ul>
+		
+		
+	</div>
+	
+	<table style="width:55%">
+		<tr>
+			<th colspan="3">UKŁAD NAPĘDOWY</th>
+		</tr>
+		<tr>
+			<td>Wymiana łańcucha</td>
+			<td>15 zł</td>
+		</tr>
+		<tr>
+			<td>Montaż/wymiana pedałów</td>
+			<td>15 zł</td>
+		</tr>
+		<tr>
+			<td>Montaż bloków</td>
+			<td>20 zł</td>
+		</tr>
+		<tr>
+			<td>Regulacja przerzutki przód</td>
+			<td>20 zł</td>
+		</tr>
+		<tr>
+			<td>Regulacja przerzutki tył</td>
+			<td>30 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana manetki</td>
+			<td>25 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana kółka przerzutki + czyszczenie</td>
+			<td>25 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana kasety</td>
+			<td>25 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana linki lub pancerze</td>
+			<td>25 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana szprychy</td>
+			<td>25 zł</td>
+		</tr>
+	</table>
+	
+	
+	<table style="width:55%">
+		<tr>
+			<th colspan="3">HAMULCE TARCZOWE/HYDRAULICZNE</th>
+		</tr>
+		<tr>
+			<td>Regulacja z odtłuszczaniem tarczy</td>
+			<td>45 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana płynów + odpowietrzenie hamulca</td>
+			<td>55 zł</td>
+		</tr>
+		<tr>
+			<td>Odpowietrzenie hamulca</td>
+			<td>15 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana kloców hamulcowych</td>
+			<td>15 zł</td>
+		</tr>
+	</table>
+	
+	<table style="width:55%">
+		<tr>
+			<th colspan="3">KOŁA</th>
+		</tr>
+		<tr>
+			<td>Centrowanie koła</td>
+			<td>30 zł</td>
+		</tr>
+		<tr>
+		<tr>
+			<td>Wymiana dętki</td>
+			<td>15 zł</td>
+		</tr>
+		<tr>
+			<td>Wymiana opon</td>
+			<td>15 zł</td>
+		</tr>
+	</table>
+	
+	
+		
+	</div>
+	
+		<div id="footer"> 
+			
+			<div id="footercontainer">
+			
+				<div class="footerblock">
+				
+					Bikemania 2021 &copy <br><br>					
+					
+					Nasze zajebiste hasło reklamowe
+				
+				</div>
+			
+				<div class="footerblock">
+					
+					44-100 Gliwice<br>
+					ul. Kaszubska 23<br>
+					pokój 308<br><br>
+					
+					Tel.: 123 456 789<br>
+					email: kontakt@bikemania.pl
+					
+				</div>
+			
+			</div>
+			
+		</div>
+		
+</body>
+</html>

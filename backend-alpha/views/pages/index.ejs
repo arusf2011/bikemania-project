@@ -1,0 +1,265 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf8" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Bikemania</title>
+  
+  <link rel="stylesheet" href="css/style.css" type="text/css"/>
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+	
+	<script src="js/jquery-1.12.3.min.js"></script>
+	
+	<script>
+
+$(document).ready(function() {
+   var stickyNavTop = $('#menu').offset().top;
+
+   var stickyNav = function(){
+   var scrollTop = $(window).scrollTop();
+
+   if (scrollTop > stickyNavTop) { 
+      $('#menu').addClass('sticky');
+   } else {
+      $('#menu').removeClass('sticky');
+    }
+   };
+
+   stickyNav();
+
+   $(window).scroll(function() {
+      stickyNav();
+   });
+   });
+   
+   function mobileMenu() {
+  var x = document.getElementById("links");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+
+	</script>
+
+	
+	
+	<center>
+		<div id="logo"><a href="/" style="color: #ffffff; text-decoration: none;">Bikemania <img src="img/logo.png" width="100"></div>
+	</center>
+		
+	
+	
+	<div id="menu">
+		<a href="/" title="Tu jesteś"><div id="nav"><i class="icon-home"></i></div></a>
+		<a href="/aktualnosci" title="Aktualności"><div class="option">Aktualności</div></a>
+		<a href="/rezerwacje" title="Rezerwacje"><div class="option">Rezerwacje</div></a>
+		<a href="/cennik" title="Cennik"><div class="option">Cennik</div></a>
+		<a href="/serwis" title="Serwis"><div class="option">Serwis</div></a>
+		<a href="/kontakt" title="Kontakt"><div class="option">Kontakt</div></a>
+	</div>
+	
+	<div class="mobilemenu">
+		
+		<a href="/" style="font-family: 'Fredoka One', cursive; color: #ffffff; text-decoration: none;">Bikemania</a>
+	
+		<div id="links">
+			<a href="/" title="Strona Główna">Strona Główna</a>
+			<a href="/aktualnosci" title="Aktualności">Aktualności</a>
+			<a href="/rezerwacje" title="Rezerwacje">Rezerwacje</a>
+			<a href="/cennik" title="Cennik">Cennik</a>
+			<a href="/serwis" title="Serwis">Serwis</a>
+			<a href="/kontakt" title="Kontakt">Kontakt</a>
+		</div>
+		
+		
+		
+		<a href="javascript:void(0);" class="icon" onclick="mobileMenu()">
+		<i class="fa fa-bars"></i>
+		</a>
+		
+	</div>
+
+	
+	
+	<div id="content">
+	
+	
+		
+		<div class="contentblock_wide">
+			
+			<h1 style="color: #7dad2c;">O nas</h1>
+			Bikemania to sieć wypożyczalni rowerów obsługująca indywidualnych klientów, jak i grupy zorganizowane. W ofercie znajdziesz rowery dziecięce, szosowe, miejskie i elektryczne. W naszej ofercie znajdziesz rowery najwyższej klasy i renomowanych producentów: Author, Hercules, Kross, Merida, Schwinn, Romet. W naszej ofercie występuje również możliwość wypożyczania sprzętu rowerowego, w zależności od potrzeb oferujemy akcesoria dla profesjonalistów, ale także dla amatorów, a jeżeli chcesz wybrać się na weekendową przejażdżkę, ale nie jesteś pewny, czy twój rower jest w pełni sprawny, to nasza serwis świadczy kompleksowe usługi naprawy rowerów oraz montażu wraz z regulacją części rowerowych i akcesoriów. 
+
+
+			<h4>ŁATWO DO NAS TRAFIĆ</h4>
+			
+			
+			Jesteśmy w samym centrum Gliwic na wydziale Matematyki Stosowanej Politechniki Śląskiej.
+			Po więcej informacji przejdź na zakładkę <a href="kontakt.html" style="color: #7dad2c; text-decoration: none;">KONTAKT</a>
+
+			
+			<br><br>
+						
+			<center><img src="img/ms.jpg"></center>
+
+			
+			
+		</div>
+		
+		
+		
+		<div class="contentblock_wide">
+			
+			<h1 style="color: #7dad2c;">Wypożyczenie i rezerwacja</h1>
+			
+			<h4>JAK ZAREZERWOWAĆ ROWER? </h4>	
+			Klient przy rejestracji podaje wzrost oraz preferowany typ roweru. Natomiast na stronie Rezerwacje klient określa datę oraz godzinę wypożyczenia. Wielkość roweru ustalamy my. 	
+			
+			<h4>CZY TRZEBA WCZEŚNIEJ REZERWOWAĆ ROWER?</h4>
+			Z tym bywa różnie. Oferujemy dużą flotę rowerów, ale zdarza się pełne obłożenie. <br>
+			Zwłaszcza w weekendy sugerujemy skontaktować się z naszą wypożyczalnią w celu zarezerwowania roweru. 
+			
+			<h4>JAK WYPOŻYCZYĆ ROWER W NASZEJ WYPOŻYCZALNI?</h4>
+			Aby wypożyczyć rower w naszej wypożyczalni, potrzebujemy okazania ważnego dokumentu tożsamości ze zdjęciem i Twojego podpisu na umowie wypożyczenia.<br>
+ 			Zgodnie z prawem nie zatrzymujemy i nie kserujemy Twojego dokumentu.
+		
+		</div>
+		
+		
+		
+		<div class="contentblock_wide">
+			
+			<h1 style="color: #7dad2c;">Często zadawane pytania</h1>
+			
+			<h4>CO W PRZYPADKU JEŚLI UKRADNĄ MI ROWER?</h4>	
+			Niestety w Polsce nie ma oferty ubezpieczenia wypożyczonego roweru.<br>
+			Wypożyczający otrzymuje od nas zapięcie rowerowe, jednak zawsze sugerujemy nie pozostawiać rowerów bez nadzoru. Takich incydentów jest na szczęście bardzo mało. W przypadku kradzieży należy niezwłocznie skontaktować się z naszą wypożyczalnią, abyśmy mogli zgłosić kradzież do odpowiednich służb.
+			
+			<h4>CO W PRZYPADKU USZKODZENIA ROWERU PODCZAS UŻYTKOWANIA?</h4>
+			Nasza wypożyczalnia oferuje możliwość ubezpieczenia wypożyczonego roweru przed uszkodzeniami, które mogą wystąpić podczas użytkowania. Jeżeli rower zostanie uszkodzony podczas użytkowania, a ubezpieczenie nie zostało wykupione, to klient musi pokryć koszty naprawy. 
+
+			
+			<h4>CZY MOŻNA WYPOŻYCZYĆ ROWERY DLA GRUPY?</h4>
+			Tak, nasza wypożyczalnia oferuje wypożyczenie rowerów dla grupy, ale zdarza się wysokie obłożenie, jeżeli chcesz być pewny, że dostępna jest odpowiednia ilość rowerów, sugerujemy kontakt z naszą wypożyczalnią w celu zarezerwowania roweru. 
+ 
+			
+			<h4>GDZIE MOGĘ ZOSTAWIĆ ROWER?</h4>
+			Rower możesz zwrócić z jednym z naszych punktów, których lokalizacje możesz znaleźć w zakładce <a href="kontakt.html" style="color: #7dad2c; text-decoration: none;">KONTAKT</a>. 
+		
+		</div>
+
+		
+		
+		
+		
+		
+	<div id="newscontainter">
+			
+			
+		<a href="aktualnosci.html#news1" style="text-decoration: none;"><div class="newsblock">
+			
+			<div class="newstitle">
+				
+				JAK DOBRAĆ ROZMIAR RAMY DLA SIEBIE
+
+			</div>
+			
+			<div class="newscontent">
+				
+			Dobór ramy ma ogromny wpływ na komfort jazdy, jednak nie jest on taki prosty w przypadku, gdy nie możemy na niego usiąść i po prostu wypróbować. Dzięki naszemu mini poradnikowi dowiesz się jak to prawidło zrobić by czerpać jak największą przyjemność z jazdy rowerem.
+				
+				
+			</div>
+			
+		</div></a>
+		
+		
+		<a href="aktualnosci.html#news2" style="text-decoration: none;"><div class="newsblock">
+			
+			<div class="newstitle">
+				
+				SPRAWDŹ NASZE ZNIŻKI DLA STUDENTÓW
+								
+			</div>
+			
+			<div class="newscontent">
+				
+				Jesteś studentem? Sprawdź jakie zniżki czekają na ciebie w naszej wypożyczalni. Sprawdź nasz cennik! 
+				
+			</div>
+			
+		</div></a>
+		
+		
+		<a href="aktualnosci.html#news3" style="text-decoration: none;"><div class="newsblock">
+			
+			<div class="newstitle">
+				
+
+				ABONAMENT DLA WYMAGAJĄCYCH
+
+				
+			</div>
+			
+			<div class="newscontent">
+				
+				Korzystasz z roweru kilka razy dziennie? Nasze abonamenty będą idealne dla ciebie! Wszystkie informacje znajdziesz w naszym cenniku.
+				
+			</div></a>
+			
+		</div>
+		
+		
+		
+		
+			
+			
+	</div>
+		
+		
+		
+		
+		
+		
+	</div>
+	
+		<div id="footer"> 
+			
+			<div id="footercontainer">
+			
+				<div class="footerblock">
+				
+					Bikemania 2021 &copy <br><br>					
+					
+					Nasze zajebiste hasło reklamowe
+				
+				</div>
+			
+				<div class="footerblock">
+					
+					44-100 Gliwice<br>
+					ul. Kaszubska 23<br>
+					pokój 308<br><br>
+					
+					Tel.: 123 456 789<br>
+					email: kontakt@bikemania.pl
+					
+				</div>
+			
+			</div>
+			
+		</div>
+		
+</body>
+</html>
