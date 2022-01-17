@@ -53,7 +53,10 @@ app.get('/serwis', (req,res) => {
     res.render('pages/serwis');
     console.log('Strona serwis została wyświetlona');
 });
-
+app.get('/rezerwacja_podsumowanie', (req,res) => {
+    res.render('pages/rezerwacja_podsumowanie');
+    console.log('Strona serwis została wyświetlona');
+});
 // Konfiguracja serwera
 const server = http.createServer(app);
 const port = 30362;
