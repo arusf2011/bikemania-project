@@ -55,7 +55,7 @@ app.get('/serwis', (req,res) => {
 });
 app.get('/rezerwacja_podsumowanie', (req,res) => {
     res.render('pages/rezerwacja_podsumowanie');
-    console.log('Strona serwis została wyświetlona');
+    console.log('Strona rezerwacja_podsumowanie została wyświetlona');
 });
 // Konfiguracja serwera
 const server = http.createServer(app);
