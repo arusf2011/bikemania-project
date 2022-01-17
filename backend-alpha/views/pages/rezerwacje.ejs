@@ -20,22 +20,17 @@
 	<script src="js/jquery-1.12.3.min.js"></script>
 	
 	<script>
-
 $(document).ready(function() {
    var stickyNavTop = $('#menu').offset().top;
-
    var stickyNav = function(){
    var scrollTop = $(window).scrollTop();
-
    if (scrollTop > stickyNavTop) { 
       $('#menu').addClass('sticky');
    } else {
       $('#menu').removeClass('sticky');
     }
    };
-
    stickyNav();
-
    $(window).scroll(function() {
       stickyNav();
    });
@@ -49,7 +44,6 @@ $(document).ready(function() {
     x.style.display = "block";
   }
 }
-
 	</script>
 
 	
@@ -94,26 +88,28 @@ $(document).ready(function() {
 	
 	
 	<div id="content">
-		<div class="contentblock">
-			<h3>Jesteś użytkownikiem naszej wypożyczalni?</h3>
+		<div class="contentblock_wide">
+			<h1 style="color: #7dad2c;">Jesteś użytkownikiem naszej wypożyczalni?</h1>
 			<p>Skorzystaj z poniższego formularza!</p>
 			<form method="post" action="/auth_user">
-				<input type="text" name="nazwisko" placeholder="Nazwisko">
-				<input type="number" name="konc_tel" placeholder="4 ostatnie cyfry numeru telefonu">
-				<input type="password" name="konc_pesel" placeholder="3 ostatnie cyfry PESELu">
-				<button type="submit">Zaloguj się!</button>
+				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko"><br>
+				<input class="inputbox" type="number" name="konc_tel" placeholder="4 ostatnie cyfry numeru telefonu"><br>
+				<input class="inputbox" type="password" name="konc_pesel" placeholder="3 ostatnie cyfry PESELu"><br>
+				<button class="button_submit" type="submit">Zaloguj się!</button>
 			</form>
 		</div>
-		<div class="contentblock">
-			<h3>Nie jesteś użytkownikiem naszej wypożyczalni?</h3>
+		
+		
+		<div class="contentblock_wide">
+			<h1 style="color: #7dad2c;">Nie jesteś użytkownikiem naszej wypożyczalni?</h1>
 			<p>Stwórz konto w naszym serwisie!</p>
 			<form method="post" action="/register_user">
-				<input type="text" name="nazwisko" placeholder="Nazwisko">
-				<input type="text" name="imie" placeholder="Imię">
-				<input type="tel" name="telefon" placeholder="Numer telefonu">
-				<input type="password" name="pesel" placeholder="PESEL">
-				<input type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego">
-				<button type="submit">Zarejestruj się!</button>
+				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko"><br>
+				<input class="inputbox" type="text" name="imie" placeholder="Imię"><br>
+				<input class="inputbox" type="tel" name="telefon" placeholder="Numer telefonu"><br>
+				<input class="inputbox" type="password" name="pesel" placeholder="PESEL"><br>
+				<input class="inputbox" type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego"><br>
+				<button class="button_submit" type="submit">Zarejestruj się!</button>
 			</form>
 		</div>
 
