@@ -163,6 +163,7 @@ CREATE TABLE `wypozyczenia` (
   `nr_cennika` int unsigned NOT NULL,
   `przejechane_km` float DEFAULT NULL,
   `cena_ostateczna` float unsigned NOT NULL,
+  `czy_oplacone` varchar(10) CHARACTER SET utf8 COLLATE utf8_polish_ci DEFAULT NULL,
   PRIMARY KEY (`id_wypozyczenia`),
   KEY `id_roweru` (`id_roweru`),
   KEY `id_uzytkownika` (`id_uzytkownika`),
@@ -192,4 +193,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-18 12:47:59
+-- Dump completed on 2022-01-18 12:56:19
