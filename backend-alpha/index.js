@@ -6,6 +6,8 @@ const mariadb = require('mariadb');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const path = require('path');
+const { workers } = require('cluster');
+const { apply } = require('body-parser');
 // Inicjacja aplikacji
 const app = express();
 app.use(express.json())
@@ -21,11 +23,11 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 const pool = mariadb.createPool({
-    host: 'xxxxx',
-    user: 'xxxxx',
-    password: 'xxxxx',
-    database: 'xxxxx',
-    port: 00000,
+    host: 'srv07.mikr.us',
+    user: 'bikemania-test',
+    password: 'JoLJCXG54R7*aXQ7',
+    database: 'bikemania_test',
+    port: 20362,
     rowsAsArray: true
 });
 // Po inicjacji przechodzę do generowania widoków stron
@@ -48,14 +50,30 @@ app.get('/kontakt', (req,res) => {
 app.get('/rezerwacje', (req,res) => {
     res.render('pages/rezerwacje');
     console.log('Strona rezerwacje została wyświetlona');
-});
+})
+app.post('/register_user', (req, res)=>{
+    //formular do rejestracji
+    var sql = "insert into uzytkownicy values(null, '"+ req.body.imie +"', '"+ req.body.nazwisko +"', "+ req.body.telefon +", "+ req.body.pesel +", '"+ req.body.nr_dowodu +"')";
+    pool.query(sql, (err) => {
+        if (err) throw err
+        res.render('pages/podsumowanie');
+        console.log('Strona register_user została wyświetlona');
+    })
+
+})
+    
+
 app.get('/serwis', (req,res) => {
     res.render('pages/serwis');
     console.log('Strona serwis została wyświetlona');
 });
-app.get('/rezerwacja_podsumowanie', (req,res) => {
-    res.render('pages/rezerwacja_podsumowanie');
-    console.log('Strona rezerwacja_podsumowanie została wyświetlona');
+app.get('/podsumowanie', (req,res) => {
+    //wyciąganie danych do podsumowania po rezerwacji
+    pool.query('select * from uzytkownicy', (err, rows, fields)=> {
+    if(err) throw err
+        res.render('pages/podsumowanie', {title:"User Details", items: rows});
+        console.log('Strona podsumowanie została wyświetlona');
+    })
 });
 // Konfiguracja serwera
 const server = http.createServer(app);
@@ -66,3 +84,6 @@ const port = 30362;
  */
 server.listen(port);
 console.log('Serwer słucha na porcie '+port);
+
+//Zapytania MySQL
+
