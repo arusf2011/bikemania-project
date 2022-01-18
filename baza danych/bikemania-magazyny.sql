@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `aktualnosci`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aktualnosci` (
-  `id_aktualnosci` int unsigned NOT NULL,
+  `id_aktualnosci` int unsigned NOT NULL AUTO_INCREMENT,
   `tytul_aktualnosci` varchar(128) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `autor_aktualnosci` int unsigned NOT NULL,
   `tresc_aktualnosci` mediumtext CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
@@ -51,12 +51,12 @@ DROP TABLE IF EXISTS `magazyny`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazyny` (
-  `id_magazynu` int unsigned NOT NULL,
+  `id_magazynu` int unsigned NOT NULL AUTO_INCREMENT,
   `nazwa_magazynu` varchar(25) NOT NULL,
   `rozmiar_magazynu` int unsigned NOT NULL,
-  `stan_magazynu` enum('empty','full','medium') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `stan_magazynu` enum('empty','full','medium') CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   PRIMARY KEY (`id_magazynu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +76,7 @@ DROP TABLE IF EXISTS `promocje`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `promocje` (
-  `id_promocji` int unsigned NOT NULL,
+  `id_promocji` int unsigned NOT NULL AUTO_INCREMENT,
   `rodzaj_promocji` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `cena_znizki` float unsigned NOT NULL,
   PRIMARY KEY (`id_promocji`)
@@ -100,7 +100,7 @@ DROP TABLE IF EXISTS `rowery`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rowery` (
-  `id_roweru` int unsigned NOT NULL,
+  `id_roweru` int unsigned NOT NULL AUTO_INCREMENT,
   `model` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `typ_roweru` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `id_magazynu` int unsigned NOT NULL,
@@ -127,7 +127,7 @@ DROP TABLE IF EXISTS `uzytkownicy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `uzytkownicy` (
-  `id_uzytkownika` int unsigned NOT NULL,
+  `id_uzytkownika` int unsigned NOT NULL AUTO_INCREMENT,
   `imie` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `nazwisko` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `numer_telefonu` int NOT NULL,
@@ -154,7 +154,7 @@ DROP TABLE IF EXISTS `wypozyczenia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `wypozyczenia` (
-  `id_wypozyczenia` int unsigned NOT NULL,
+  `id_wypozyczenia` int unsigned NOT NULL AUTO_INCREMENT,
   `id_roweru` int unsigned NOT NULL,
   `id_uzytkownika` int unsigned NOT NULL,
   `data_rozpoczecia` datetime NOT NULL,
