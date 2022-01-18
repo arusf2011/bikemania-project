@@ -71,11 +71,11 @@ DROP TABLE IF EXISTS `uzytkownicy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `uzytkownicy` (
-  `id_uzytkownika` int unsigned NOT NULL,
+  `id_uzytkownika` int unsigned NOT NULL AUTO_INCREMENT,
   `imie` varchar(25) NOT NULL,
   `nazwisko` varchar(25) NOT NULL,
-  `numer_telefonu` int NOT NULL,
-  `pesel` int DEFAULT NULL,
+  `numer_telefonu` varchar(9) NOT NULL,
+  `pesel` varchar(11) DEFAULT NULL,
   `numer_dowodu_osobistego` varchar(9) DEFAULT NULL,
   PRIMARY KEY (`id_uzytkownika`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;

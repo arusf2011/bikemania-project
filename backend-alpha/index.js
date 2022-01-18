@@ -116,6 +116,14 @@ app.get('/podsumowanie_rezerwacja', (req,res) => {
     res.render('pages/rezerwacja_podsumowanie');
     console.log('Strona serwis została wyświetlona');
 });
+app.get('/podsumowanie', (req,res) => {
+    //wyciąganie danych do podsumowania po rezerwacji
+    pool.query('select * from uzytkownicy', (err, rows, fields)=> {
+    if(err) throw err
+        res.render('pages/podsumowanie', {title:"User Details", items: rows});
+        console.log('Strona podsumowanie została wyświetlona');
+    })
+});
 app.get('/admin_login',(req,res) => {
     if(req.session.errors != '')
     {
@@ -188,3 +196,6 @@ const port = 30362;
  */
 server.listen(port);
 console.log('Serwer słucha na porcie '+port);
+
+//Zapytania MySQL
+
