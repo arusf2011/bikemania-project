@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Czas wygenerowania: 18 Sty 2022, 11:12
+-- Czas wygenerowania: 18 Sty 2022, 12:21
 -- Wersja serwera: 5.5.21-log
 -- Wersja PHP: 5.3.20
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `promocje` (
 CREATE TABLE IF NOT EXISTS `rowery` (
   `id_roweru` int(10) unsigned NOT NULL,
   `model` varchar(25) COLLATE utf8_polish_ci NOT NULL,
-  `typ_roweru` varchar(25) COLLATE utf8_polish_ci NOT NULL,
+  `typ_roweru` varchar(11) COLLATE utf8_polish_ci NOT NULL,
   PRIMARY KEY (`id_roweru`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
@@ -92,8 +92,9 @@ CREATE TABLE IF NOT EXISTS `wypozyczenia` (
   `data_zakonczenia` datetime NOT NULL,
   `id_promocji` int(10) unsigned NOT NULL,
   `nr_cennika` int(11) unsigned NOT NULL,
-  `przejechane_km` float DEFAULT NULL,
+  `przejechane_km` float NOT NULL,
   `cena_ostateczna` float unsigned NOT NULL,
+  `czy_oplacone` varchar(10) COLLATE utf8_polish_ci DEFAULT NULL,
   PRIMARY KEY (`id_wypozyczenia`),
   KEY `id_roweru` (`id_roweru`),
   KEY `id_uzytkownika` (`id_uzytkownika`),
@@ -122,3 +123,4 @@ ALTER TABLE `wypozyczenia`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
