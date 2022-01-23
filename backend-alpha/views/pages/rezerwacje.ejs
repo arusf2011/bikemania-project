@@ -91,6 +91,9 @@ $(document).ready(function() {
 		<% if(error != '') { %>
 			<h3 style="color: #c40707"><%= error %></h3>
 		<% } %>
+		<% if(succ != '') { %>
+			<h3 style="color: #17c407"><%= succ %></h3>
+		<% } %>
 		<div class="contentblock_wide">
 			<h1 style="color: #7dad2c;">Jesteś użytkownikiem naszej wypożyczalni?</h1>
 			<p>Skorzystaj z poniższego formularza!</p>
@@ -109,9 +112,9 @@ $(document).ready(function() {
 			<form method="post" action="/register_user">
 				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko"><br>
 				<input class="inputbox" type="text" name="imie" placeholder="Imię"><br>
-				<input class="inputbox" type="tel" name="telefon" placeholder="Numer telefonu"><br>
-				<input class="inputbox" type="password" name="pesel" placeholder="PESEL"><br>
-				<input class="inputbox" type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego"><br>
+				<input class="inputbox" type="tel" name="telefon" placeholder="Numer telefonu" maxlength="9"><br>
+				<input class="inputbox" type="password" name="pesel" placeholder="PESEL" maxlength="11"><br>
+				<input class="inputbox" type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego" maxlength="9"><br>
 				<button class="button_submit" type="submit">Zarejestruj się!</button>
 			</form>
 		</div>
