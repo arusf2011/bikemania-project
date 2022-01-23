@@ -7,8 +7,11 @@
   <meta name="Author" content=" [dane autora] " />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title> Logowanie - Bikemania </title>
 
+  <title> Panel administracyjny - Bikemania </title>
+
+
+  
   <link rel="stylesheet" href="css/style.css" type="text/css"/>
   <link rel="stylesheet" href="css/fontello.css" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -20,17 +23,22 @@
 	<script src="js/jquery-1.12.3.min.js"></script>
 	
 	<script>
+
 $(document).ready(function() {
    var stickyNavTop = $('#menu').offset().top;
+
    var stickyNav = function(){
    var scrollTop = $(window).scrollTop();
+
    if (scrollTop > stickyNavTop) { 
       $('#menu').addClass('sticky');
    } else {
       $('#menu').removeClass('sticky');
     }
    };
+
    stickyNav();
+
    $(window).scroll(function() {
       stickyNav();
    });
@@ -44,6 +52,7 @@ $(document).ready(function() {
     x.style.display = "block";
   }
 }
+
 	</script>
 
 	
@@ -56,7 +65,7 @@ $(document).ready(function() {
 	
 	<div id="menu">
 		<a href="/" title="Strona Główna"><div id="nav"><i class="icon-home"></i></div></a>
-		<a href="/aktualnosci" title="Aktualności"><div class="option">Aktualności</div></a>
+		<a href="/aktualnosco" title="Aktualności"><div class="option">Aktualności</div></a>
 		<a href="/rezerwacje" title="Rezerwacje"><div class="option">Rezerwacje</div></a>
 		<a href="/cennik" title="Cennik"><div class="option">Cennik</div></a>
 		<a href="/serwis" title="Serwis"><div class="option">Serwis</div></a>
@@ -83,26 +92,99 @@ $(document).ready(function() {
 		</a>
 		
 	</div>
-	
-	
+
 	
 	
 	<div id="content">
-		<div class="contentblock_wide">
-			<% if (Object.keys(errors).length === 0 || errors == '') { } else { %>
-				<% Object.values(errors).forEach(error => { %>
-					<p style="color: #c40707; text-align: center;"><b><%= error.msg %></b></p>
-				<% }) %>
-			 <% } %>
-			<h1 style="color: #7dad2c;">Logowanie</h1>
 
-			<form method="post" action="/auth_admin">
-				<input class="inputbox" type="text" name="nazwa_uzytkownika" placeholder="Nazwa użytkownika"><br>
-				<input class="inputbox" type="password" name="haslo" placeholder="Hasło"><br>
-				<button class="button_submit" type="submit">Zaloguj się!</button>
-			</form>
+	<div class="contentblock_wide">
+		<% if(success != '') { %>
+			<h3 style="color: #3dc407"><%= success %></h3>
+			<% if(id_wypozyczenia != 0) { %>
+				<form method="post" action="/oplac_wynajem">
+					<select name="metoda">
+						<option value="karta">Karta/BLIK</option>
+						<option value="gotówka">Gotówka</option>
+						<option value="voucher">Voucher</option>
+					</select>
+					<input type="hidden" name="id_wypozyczenia" value="<%= id_wypozyczenia %>">
+					<button  style="background-color: #cac724; color: white; width: 150px; height: 25px; border-radius: 5px; border: 1px solid white;">Opłać</button>
+				</form>
+			<% } %>
+		<% } %>
+		<h1 style="color: #7dad2c;">Panel administracyjny</h1>		
+		<a href="/admin_logout"><button type="button" style="background-color: #ca2424; color: white; width: 150px; height: 25px; border-radius: 5px; border: 1px solid white;">Wyloguj</button></a>
+	</div>
+	
+	<div id="newscontainter">
+			
+			
+		<div class="newsblock">
+			
+			<div class="newstitle">
+				
+				Anulowanie rezerwacji
+				
+			</div>
+			
+			<div class="newscontent" style="background-color: #3d94ce;">
+				<form method="post" action="/anuluj_rezerwacje">
+					<p style="color: #d43232"><b>UWAGA!</b> Poinformuj klienta, że ta akcja jest nieodwracalna!</p>
+					<p>Numer rezerwacji</p>
+					<input type="number" class="inputbox" name="id_wypozyczenia" required>
+					<button type="submit" class="button_submit" style="background-color: #c90606;">Anuluj rezerwację</button>
+				</form>
+			</div>
+			
 		</div>
-
+		
+		<div class="newsblock">
+			
+			<div class="newstitle">
+				
+				Rozpoczęcie wynajmu
+				
+			</div>
+			
+			<div class="newscontent" style="background-color: #3d94ce;">
+				<form method="post" action="/rozpoczecie_wynajmu">
+					<p>Numer rezerwacji</p>
+					<input type="number" class="inputbox" name="id_wypozyczenia" required>
+					<button type="submit" class="button_submit">Rozpocznij wynajem</button>
+				</form>
+			</div>
+			
+		</div>
+		
+		
+		<div class="newsblock">
+			
+			<div class="newstitle">
+				
+				Zakończenie wynajmu
+				
+			</div>
+			
+			<div class="newscontent" style="background-color: #3d94ce;">
+				<form method="post" action="/zakonczenie_wynajmu">
+					<p>Przed płatnością <b>zakończ wynajem!</b> Ostateczna kwota na tej podstawie zostanie wyliczona!</p>
+					<p>Numer rezerwacji</p>
+					<input type="number" class="inputbox" name="id_wypozyczenia" required>
+					<button type="submit" class="button_submit">Zakończ wynajem</button>
+				</form>
+			</div>
+			
+		</div>
+		
+		
+		
+		
+		
+			
+			
+	</div>
+	
+	
 		
 	</div>
 	
