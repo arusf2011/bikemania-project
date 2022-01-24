@@ -97,37 +97,39 @@ $(document).ready(function() {
 	
 	<div id="content">
 
-	<div class="contentblock_wide">
-		<% if(success != '') { %>
-			<h3 style="color: #3dc407"><%= success %></h3>
-			<% if(id_wypozyczenia != 0) { %>
-				<form method="post" action="/oplac_wynajem">
-					<select name="metoda">
-						<option value="karta">Karta/BLIK</option>
-						<option value="gotówka">Gotówka</option>
-						<option value="voucher">Voucher</option>
-					</select>
-					<input type="hidden" name="id_wypozyczenia" value="<%= id_wypozyczenia %>">
-					<button  style="background-color: #cac724; color: white; width: 150px; height: 25px; border-radius: 5px; border: 1px solid white;">Opłać</button>
-				</form>
+		<div class="contentblock_wide">
+			<h1 style="color: #7dad2c;">Panel administracyjny</h1>		
+			<a href="/admin_logout"><button type="button" class="button_submit_red">Wyloguj</button></a>
+			<% if(success != '') { %>
+				<h3 style="color: #3dc407"><%= success %></h3>
+				<p>Opłać wynajem</p>
+				<% if(id_wypozyczenia != 0) { %>
+					<form method="post" action="/oplac_wynajem">
+						<select class="inputbox" style="width: 120px;" name="metoda">
+							<option value="karta">Karta/BLIK</option>
+							<option value="gotówka">Gotówka</option>
+							<option value="voucher">Voucher</option>
+						</select>
+						<input type="hidden" name="id_wypozyczenia" value="<%= id_wypozyczenia %>">
+						<button class="button_submit_orange">Opłać</button>
+					</form>
+				<% } %>
 			<% } %>
-		<% } %>
-		<h1 style="color: #7dad2c;">Panel administracyjny</h1>		
-		<a href="/admin_logout"><button type="button" style="background-color: #ca2424; color: white; width: 150px; height: 25px; border-radius: 5px; border: 1px solid white;">Wyloguj</button></a>
-	</div>
+			
+		</div>
 	
-	<div id="newscontainter">
+	<div id="admincontainter">
 			
 			
-		<div class="newsblock">
+		<div class="adminblock">
 			
-			<div class="newstitle">
+			<div class="admintitle">
 				
 				Anulowanie rezerwacji
 				
 			</div>
 			
-			<div class="newscontent" style="background-color: #3d94ce;">
+			<div class="admincontent">
 				<form method="post" action="/anuluj_rezerwacje">
 					<p style="color: #d43232"><b>UWAGA!</b> Poinformuj klienta, że ta akcja jest nieodwracalna!</p>
 					<p>Numer rezerwacji</p>
@@ -138,15 +140,15 @@ $(document).ready(function() {
 			
 		</div>
 		
-		<div class="newsblock">
+		<div class="adminblock">
 			
-			<div class="newstitle">
+			<div class="admintitle">
 				
 				Rozpoczęcie wynajmu
 				
 			</div>
 			
-			<div class="newscontent" style="background-color: #3d94ce;">
+			<div class="admincontent">
 				<form method="post" action="/rozpoczecie_wynajmu">
 					<p>Numer rezerwacji</p>
 					<input type="number" class="inputbox" name="id_wypozyczenia" required>
@@ -157,15 +159,15 @@ $(document).ready(function() {
 		</div>
 		
 		
-		<div class="newsblock">
+		<div class="adminblock">
 			
-			<div class="newstitle">
+			<div class="admintitle">
 				
 				Zakończenie wynajmu
 				
 			</div>
 			
-			<div class="newscontent" style="background-color: #3d94ce;">
+			<div class="admincontent">
 				<form method="post" action="/zakonczenie_wynajmu">
 					<p>Przed płatnością <b>zakończ wynajem!</b> Ostateczna kwota na tej podstawie zostanie wyliczona!</p>
 					<p>Numer rezerwacji</p>
@@ -196,7 +198,7 @@ $(document).ready(function() {
 				
 					Bikemania 2021 &copy <br><br>					
 					
-					Nasze zajebiste hasło reklamowe
+					Najlepsze rowery w Gliwicach
 				
 				</div>
 			
