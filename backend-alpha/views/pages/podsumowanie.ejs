@@ -97,56 +97,41 @@ $(document).ready(function() {
 	
 	<div id="content">
 
-	<div class="contentblock_wide">
+		<div class="contentblock_wide">
+			
+			<h1 style="color: #7dad2c;">Podsumowanie rezerwacji</h1>
 		
-		<h1 style="color: #7dad2c;">Podsumowanie rezerwacji</h1>
+		
+		<table style="width:55%">
+			<tr>
+				<th colspan="3">Dane dotyczące Twojej rezerwacji</th>
+			</tr>
+			<tr>
+				<td class="tablerow">Imię</td>
+				<td><%=item.imie %></td>
+			</tr>
+			<tr>
+				<td class="tablerow">Nazwisko</td>
+				<td><%=item.nazwisko %></td>
+			</tr>
+			<tr>
+				<td class="tablerow">Numer Telefonu</td>
+				<td><%=numer_telefonu %></td>
+			</tr>
+			<tr>
+				<td class="tablerow">Pesel</td>
+				<td><%=pesel %></td>
+			</tr>
+			<tr>
+				<td class="tablerow">Numer dowodu osobistego</td>
+				<td><%=numer_dowodu_osobistego %></td>
+			</tr>
+		</table>
 		
 		
-	</div>
-	
-	<div id="newscontainter">
-			
-			
-		<div id="news1"></div>
-		<div class="newsblock">
-			
-			<div class="newstitle">
 				
-				Dane dotyczące Twojej rezerwacji:
-				
-			</div>
-			
-			<div class="newscontent">
-				
-				<table border="1">
-					<tr>
-						<th>Imię</th>
-						<th>Nazwisko</th>
-						<th>Numer Telefonu</th>
-						<th>Pesel</th>
-						<th>Numer dowodu osobistego</th>
-					</tr>
-					
-					
-					<tr>
-						<td><%=item.imie %></td>
-						<td><%=item.nazwisko %></td>
-						<td><%=numer_telefonu %></td>
-						<td><%=pesel %></td>
-						<td><%=numer_dowodu_osobistego %></td>
-					</tr>
-				</table>
-			</div>
-			
+		</div>		
 		</div>
-		
-		
-		
-		
-		
-			
-			
-	</div>
 	
 	
 		
@@ -160,7 +145,7 @@ $(document).ready(function() {
 				
 					Bikemania 2021 &copy <br><br>					
 					
-					Nasze zajebiste hasło reklamowe
+					Najlepsze rowery w Gliwicach
 				
 				</div>
 			
