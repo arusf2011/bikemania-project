@@ -104,16 +104,22 @@ $(document).ready(function() {
 		Na tej stronie możesz zapoznać się z najnowszymi wiadomościami dotyczącymi naszej firmy. Dzięki tej stronie możesz być na bieżąco z naszą ofertą oraz ze wszystki zmianami które wprowadzamy.
 		
 	</div>
+
 	
+	// to do
 	<div id="newscontainter">
+		<%
+			if(aktu.length!=0){
+			var i=1;
+			aktu.forEach(function(data){
+			%>	
 			
-			
-		<div id="news1"></div>
+		<div id="news<%=i; >"></div>
 		<div class="newsblock">
 			
 			<div class="newstitle">
 				
-				JAK DOBRAĆ ROZMIAR RAMY DLA SIEBIE
+				<%=data.tytul_aktualnosci>
 				
 			</div>
 			

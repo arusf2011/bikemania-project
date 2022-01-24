@@ -23,10 +23,10 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 const pool = mariadb.createPool({
-    host: 'xxxxxx',
-    user: 'xxxxxxx',
-    password: 'xxxxxxx',
-    database: 'xxxxxx',
+    host: 'xxxxx',
+    user: 'xxxxx',
+    password: 'xxxxx',
+    database: 'xxxxx',
     port: 0,
     rowsAsArray: true
 });
@@ -227,6 +227,23 @@ app.get('/admin_dash',(req,res) => {
                 id_wypozyczenia: 0
             });
         }
+
+        // to do
+
+        else if(req.session.opublikowanie_aktualnosci == true)
+        {
+            succ = "Aktualność "+req.session.tytul_aktualnosci+" została opublikowana!";
+            req.session.opublikowanie_aktualnosci = null;
+            req.session.tytul_aktualnosci = null;
+            req.session.autor_aktualnosci = null;
+            req.session.tresc_aktualnosci = null;           
+            res.render('pages/admin_dash',{
+                success: succ,
+                tytul_aktualnosci: 0,
+                autor_aktualnosci: 0,
+                tresc_aktualnosci: 0
+            });
+        }
         else if(req.session.zakonczenie_wynajmu != '')
         {
             if(req.session.id_wypozyczenia != null)
@@ -306,7 +323,26 @@ app.post('/oplac_wynajem',(req,res) => {
         })
         .catch(err => { console.log(err); })
 
-})
+});
+
+
+// to do
+
+app.post('/opublikowanie_aktualnosci',(req,res) => {
+    tytul = req.body.tytul_aktualnosci;
+    autor = req.body.autor_aktualnosci;
+    tresc = req.body.tresc_aktualnosci;
+    pool.getConnection()
+        .then((conn) => {
+            conn.query('INSERT INTO aktualnosci VALUES(NULL,?,?,?,NOW())',[tytul,autor,tresc])
+            .then((rows) => {
+                req.session.success = 'Dodano aktualność!';
+                res.redirect('/aktualnosci');
+            })
+            .catch(err => { console.log(err); });
+        })
+        .catch(err => { console.log(err); });
+});
 app.post('/zakonczenie_wynajmu',(req,res) => {
     id_wypozyczenia = req.body.id_wypozyczenia;
     przejechane_kilometry = req.body.przejechane_kilometry;
@@ -740,6 +776,7 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
         })
         .catch(err => { console.log(err); })
 });
+
 // Konfiguracja serwera
 const server = http.createServer(app);
 const port = 30362;
