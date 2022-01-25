@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `magazyny`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazyny` (
   `id_magazynu` int unsigned NOT NULL AUTO_INCREMENT,
-  `nazwa_magazynu` varchar(25) NOT NULL,
+  `nazwa_magazynu` varchar(25) COLLATE utf8_polish_ci NOT NULL,
   `rozmiar_magazynu` int unsigned NOT NULL,
   `stan_magazynu` enum('empty','full','medium') CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   PRIMARY KEY (`id_magazynu`)
@@ -78,9 +78,9 @@ CREATE TABLE `promocje` (
   `rodzaj_promocji` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `cena_znizki` float unsigned NOT NULL,
   `id_aktualnosci` int unsigned NOT NULL,
-  PRIMARY KEY (`id_promocji`)
+  PRIMARY KEY (`id_promocji`),
   KEY `id_aktualnosci` (`id_aktualnosci`),
-  CONSTRAINT `aktualnosci_ibfk_1` FOREIGN KEY (`id_aktualnosci`) REFERENCES `promocje` (`id_aktualnosci`)
+  CONSTRAINT `promocje_ibfk_1` FOREIGN KEY (`id_aktualnosci`) REFERENCES `aktualnosci` (`id_aktualnosci`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -194,4 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-18 12:56:19
+-- Dump completed on 2022-01-25 13:27:27
