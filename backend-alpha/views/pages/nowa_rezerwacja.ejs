@@ -93,17 +93,13 @@ $(document).ready(function() {
 			<h1 style="color: #7dad2c;">Nowa rezerwacja</h1>
 			<form method="post" action="/nowa_rezerwacja">
 				<p>Początek rezerwacji</p>
-				<input class="inputbox" type="datetime-local" id="datepicker"/>
+				<input class="inputbox" type="datetime-local" id="datepicker1" name="data_start" required/>
 				<p>Koniec rezerwacji</p>
-				<input class="inputbox" type="datetime-local" id="datepicker"/>
+				<input class="inputbox" type="datetime-local" id="datepicker2" name="data_koniec" required/>
 				<p>Rowery</p>
-				<select class="inputbox"  name="rower">
-					<% rowery.forEach(rower => { %>
-						<option value="<%= rower[0] %>"><%= rower[1]+" - "+rower[2] %></div>
-					<% }) %>
-				</select>
+				<select class="inputbox" name="rower" id="rower" required></select>
 				<p>Cennik</p>
-				<select class="inputbox"  name="cennik">
+				<select class="inputbox" name="cennik" required>
 					<option value="1">Abonament dzienny</option>
 					<option value="2">Cennik minutowy</option>
 					<option value="3">Cennik kilometrowy</option>
@@ -144,4 +140,24 @@ $(document).ready(function() {
 		</div>
 		
 </body>
+	<script>
+		$(document).ready(() => {
+			$('#datepicker2').on('change',() => {
+				var start_data = $('#datepicker1').val();
+				var end_data = $('#datepicker2').val();
+				var data = {start_data: start_data, end_data: end_data};
+				fetch("/api_rowery",{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json'},
+					body: JSON.stringify(data)
+				}).then(res => {
+					console.log("Request zrobiony");
+					return res.text();
+				})
+				.then(data => {
+					$('#rower').html(data);
+				})
+			});
+		})
+	</script>
 </html>

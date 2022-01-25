@@ -88,7 +88,8 @@ $(document).ready(function() {
 	
 	
 	<div id="content">
-		<% if(error != '') { %>
+		<% if(error != '') { 
+			console.log(error) %>
 			<h3 style="color: #c40707"><%= error %></h3>
 		<% } %>
 		<% if(succ != '') { %>
@@ -98,9 +99,9 @@ $(document).ready(function() {
 			<h1 style="color: #7dad2c;">Jesteś użytkownikiem naszej wypożyczalni?</h1>
 			<p>Skorzystaj z poniższego formularza!</p>
 			<form method="post" action="/auth_user">
-				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko"><br>
-				<input class="inputbox" type="text" name="konc_tel" placeholder="4 ostatnie cyfry numeru telefonu" maxlength="4"><br>
-				<input class="inputbox" type="password" name="konc_pesel" placeholder="3 ostatnie cyfry numeru PESEL" maxlength="3"><br>
+				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko" required><br>
+				<input class="inputbox" type="text" name="konc_tel" placeholder="4 ostatnie cyfry numeru telefonu" minlength="4" maxlength="4" required><br>
+				<input class="inputbox" type="password" name="konc_pesel" placeholder="3 ostatnie cyfry numeru PESEL" minlength="3" maxlength="3" required><br>
 				<button class="button_submit" type="submit">Zaloguj się!</button>
 			</form>
 		</div>

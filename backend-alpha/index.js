@@ -87,50 +87,114 @@ app.post('/register_user',(req,res) => {
             .then((rows) => {
                 req.session.success = 'Konto zostało utworzone! Możesz przejść do logowania!';
                 res.redirect('/rezerwacje');
+                conn.end();
             })
             .catch(err => { console.log(err); });
+            conn.end();
         })
         .catch(err => { console.log(err); });
 });
-app.post('/auth_user',(req,res)=> {
-    nazwisko = req.body.nazwisko;
-    konc_tel = "%"+req.body.konc_tel;
-    konc_pesel = "%"+req.body.konc_pesel;
-    pool.getConnection()
-        .then((conn) => {
-            conn.query('SELECT id_uzytkownika FROM uzytkownicy WHERE nazwisko = ? AND numer_telefonu LIKE ? AND pesel LIKE ?',[nazwisko,konc_tel,konc_pesel])
-                .then((rows) => {
-                    console.log(rows.length);
-                    if(rows.length == 1)
-                    {
-                        req.session.loggedIn = true;
-                        req.session.id_uzytkownika = rows[0][0]
-                        res.redirect('/nowa_rezerwacja');
-                    }
-                    else
-                    {
-                        req.session.error = 'Nie ma takiego konta! Aby skorzystać z naszego serwisu, zarejestruj się! :)';
-                        res.redirect('/rezerwacje');
-                    }
-                })
-                .catch(err => {console.log(err)})
-        })
-        .catch(err => {console.log(err)})
+app.post('/auth_user',[
+    check('konc_tel')
+        .isNumeric()
+        .isLength(4)
+        .notEmpty()
+        .withMessage('Końcówka telefonu jest za krótka (wymagane są 3 cyfry)'),
+    check('konc_pesel')
+        .toInt()
+        .isLength(3)
+        .notEmpty()
+        .withMessage('Końcówka PESELU jest za krótka (wymagane są 4 cyfry)'),
+    check('nazwisko')
+        .isString()
+        .notEmpty()
+        .escape()
+        .withMessage('Nazwisko jest puste lub nie jest tekstem')
+],(req,res)=> {
+    const errors = validationResult(req);
+    if(errors.isEmpty())
+    {
+        nazwisko = req.body.nazwisko;
+        konc_tel = "%"+req.body.konc_tel;
+        konc_pesel = "%"+req.body.konc_pesel;
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT id_uzytkownika FROM uzytkownicy WHERE nazwisko = ? AND numer_telefonu LIKE ? AND pesel LIKE ?',[nazwisko,konc_tel,konc_pesel])
+                    .then((rows) => {
+                        console.log(rows.length);
+                        if(rows.length == 1)
+                        {
+                            req.session.loggedIn = true;
+                            req.session.id_uzytkownika = rows[0][0]
+                            res.redirect('/nowa_rezerwacja');
+                            conn.end();
+                        }
+                        else
+                        {
+                            req.session.error = 'Nie ma takiego konta! Aby skorzystać z naszego serwisu, zarejestruj się! :)';
+                            res.redirect('/rezerwacje');
+                            conn.end();
+                        }
+                    })
+                    .catch(err => {console.log(err)})
+                    conn.end();
+            })
+            .catch(err => {console.log(err)})
+    }
+    else
+    {
+        req.session.error = errors.mapped();
+        res.redirect('/rezerwacje');
+    }
 });
 app.get('/nowa_rezerwacja',(req,res) => {
     if(req.session.loggedIn)
     {
+        res.render('pages/nowa_rezerwacja');
+    }
+    else
+    {
+        res.redirect('/rezerwacje');
+    }
+});
+app.post('/api_rowery',(req,res) => {
+    start_data = req.body.start_data;
+    end_data = req.body.end_data;
+    pool.getConnection()
+        .then((conn) => {
+            conn.query('SELECT DISTINCT rowery.id_roweru as id_roweru, model, typ_roweru FROM rowery LEFT JOIN wypozyczenia ON rowery.id_roweru = wypozyczenia.id_roweru WHERE ((wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?) AND (wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?)) OR wypozyczenia.id_roweru IS null',[start_data,start_data,end_data,end_data])
+                .then((rows) => {
+                    res.render('pages/ls_rowery',{
+                        rowery: rows
+                    });
+                    conn.end();
+                })
+                .catch(err => { console.log(err); });
+        })
+        .catch(err => { console.log(err); });
+})
+app.post('/nowa_rezerwacja',(req,res) => {
+    if(req.session.loggedIn)
+    {
+        data_start = new Date(Date.parse(req.body.data_start));
+        data_koniec = new Date(Date.parse(req.body.data_koniec));
+        rower = req.body.rower;
+        cennik = req.body.cennik;
+        id_uzytkownika = req.session.id_uzytkownika;
         pool.getConnection()
             .then((conn) => {
-                conn.query('SELECT * FROM rowery LEFT JOIN wypozyczenia ON rowery.id_roweru = wypozyczenia.id_roweru WHERE wypozyczenia.data_zakonczenia < NOW() OR wypozyczenia.id_roweru IS null')
-                    .then((rows) => {
-                        res.render('pages/nowa_rezerwacja',{
-                            rowery: rows
-                        });
+                conn.query('INSERT INTO wypozyczenia VALUES(null,?,?,?,?,0,?,null,1,null)',[rower,id_uzytkownika,data_start,data_koniec,cennik])
+                    .then((result) => {
+                        req.session.data_start = data_start;
+                        req.session.data_koniec = data_koniec;
+                        req.session.rower = rower;
+                        req.session.cennik = cennik;
+                        req.session.id_rezerwacji = result.insertId;
+                        res.redirect('/podsumowanie_rezerwacja');
                     })
-                    .catch(err => { console.log(err); })
+                    .catch(err => { console.log(err); });
             })
-            .catch(err => { console.log(err); })
+            .catch(err => { console.log(err); });
     }
     else
     {
@@ -142,16 +206,42 @@ app.get('/serwis', (req,res) => {
     console.log('Strona serwis została wyświetlona');
 });
 app.get('/podsumowanie_rezerwacja', (req,res) => {
-    res.render('pages/rezerwacja_podsumowanie');
-    console.log('Strona serwis została wyświetlona');
-});
-app.get('/podsumowanie', (req,res) => {
-    //wyciąganie danych do podsumowania po rezerwacji
-    pool.query('select * from uzytkownicy', (err, rows, fields)=> {
-    if(err) throw err
-        res.render('pages/podsumowanie', {title:"User Details", items: rows});
-        console.log('Strona podsumowanie została wyświetlona');
-    })
+    var cennik_txt = '';
+    if(req.session.cennik == 1)
+    {
+        cennik_txt = 'Abonament dzienny';
+    }
+    else if(req.session.cennik == 2)
+    {
+        cennik_txt = 'Cennik minutowy';
+    }
+    else if(req.session.cennik == 3)
+    {
+        cennik_txt = 'Cennik kilometrowy';
+    }
+    else if(req.session.cennik == 4)
+    {
+        cennik_txt = 'Abonament miesięczny';
+    }
+    console.log(cennik_txt);
+    pool.getConnection()
+        .then((conn) => {
+            conn.query('SELECT model, typ_roweru FROM rowery WHERE id_roweru = ?',req.session.rower)
+                .then((rows) => {
+                    res.render('pages/podsumowanie',{
+                        rower: rows[0][0]+' - '+rows[0][1],
+                        cennik: cennik_txt,
+                        data_start: req.session.data_start,
+                        data_koniec: req.session.data_koniec,
+                        id: req.session.id_rezerwacji
+                    });
+                    console.log('Strona serwis została wyświetlona');
+                    conn.end();
+                })
+                .catch(err => { console.log(err); });
+                conn.end();
+        })
+        .catch(err => { console.log(err); });
 });
 app.get('/admin_login',(req,res) => {
     if(req.session.errors != ' ')
@@ -290,8 +380,10 @@ app.post('/rozpoczecie_wynajmu',(req,res) => {
                     req.session.rozpoczecie_wynajmu = true;
                     req.session.id_wypozyczenia = id_wypozyczenia;
                     res.redirect('/admin_dash');
+                    conn.end();
                 })
                 .catch(err => { console.log(err); })
+                conn.end();
         })
         .catch(err => { console.log(err); })
 });
@@ -303,8 +395,10 @@ app.post('/anuluj_rezerwacje',(req,res) => {
                 .then((rows) => {
                     req.session.anuluj_wypozyczenie = true;
                     res.redirect('/admin_dash');
+                    conn.end();
                 })
-                .catch(err => { console.log(err); })
+                .catch(err => { console.log(err); });
+                conn.end();
         })
         .catch(err => { console.log(err); })
 });
@@ -318,10 +412,12 @@ app.post('/oplac_wynajem',(req,res) => {
                     req.session.oplacenie_wynajmu = true;
                     req.session.id_wypozyczenia = id_wypozyczenia;
                     res.redirect('/admin_dash');
+                    conn.end();
                 })
-                .catch(err => { console.log(err); })
+                .catch(err => { console.log(err); });
+                conn.end();
         })
-        .catch(err => { console.log(err); })
+        .catch(err => { console.log(err); });
 
 });
 
@@ -338,8 +434,10 @@ app.post('/opublikowanie_aktualnosci',(req,res) => {
             .then((rows) => {
                 req.session.success = 'Dodano aktualność!';
                 res.redirect('/aktualnosci');
+                conn.end();
             })
             .catch(err => { console.log(err); });
+            conn.end();
         })
         .catch(err => { console.log(err); });
 });
@@ -362,8 +460,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                             .then((rows1) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (abonament całodniowy)";
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                     })
                                     .catch(err => { console.log(err); });
                                 break;
@@ -374,8 +476,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                             .then((rows1) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (abonament miesięczny)";
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                     })
                                     .catch(err => { console.log(err); });
                                 break;
@@ -399,8 +505,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                         .then((rows1) => {
                                             req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (bezpłatny przejazd do 15 minut)";
                                             res.redirect('/admin_dash');
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
+                                        conn2.end();
+                                        conn.end();
                                 })
                                 .catch(err => { console.log(err); });
                         }
@@ -416,8 +526,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                     req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 10 zł.";
                                                     req.session.id_wypozyczenia = id_wypozyczenia;
                                                     res.redirect('/admin_dash');
+                                                    conn2.end();
+                                                    conn.end();
                                                 })
                                                 .catch(err => { console.log(err); });
+                                                conn2.end();
+                                                conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -429,8 +543,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 5 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -442,8 +560,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 5 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -455,8 +577,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 3 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -476,8 +602,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 17 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -489,8 +619,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 9 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -502,8 +636,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 9 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -515,8 +653,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 6 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -536,8 +678,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 24 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -549,8 +695,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 13 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -562,8 +712,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 13 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -575,8 +729,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 8 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -610,8 +768,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                         req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę "+koszt+" zł.";
                                         req.session.id_wypozyczenia = id_wypozyczenia;
                                         res.redirect('/admin_dash');
+                                        conn2.end();
+                                        conn.end();
                                     })
                                     .catch(err => { console.log(err); });
+                                    conn2.end();
+                                    conn.end();
                                 })
                                 .catch(err => { console.log(err); });
                         }
@@ -630,8 +792,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -643,8 +809,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 16 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -656,8 +826,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 16 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -669,8 +843,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 12 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -690,8 +868,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 30 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -703,8 +885,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -716,8 +902,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -729,8 +919,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                                 req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 12 zł.";
                                                 req.session.id_wypozyczenia = id_wypozyczenia;
                                                 res.redirect('/admin_dash');
+                                                conn2.end();
+                                                conn.end();
                                             })
                                             .catch(err => { console.log(err); });
+                                            conn2.end();
+                                            conn.end();
                                         })
                                         .catch(err => { console.log(err); });
                                     break;
@@ -765,8 +959,12 @@ app.post('/zakonczenie_wynajmu',(req,res) => {
                                         req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę "+koszt+" zł.";
                                         req.session.id_wypozyczenia = id_wypozyczenia;
                                         res.redirect('/admin_dash');
+                                        conn2.end();
+                                        conn.end();
                                     })
                                     .catch(err => { console.log(err); });
+                                    conn2.end();
+                                    conn.end();
                                 })
                                 .catch(err => { console.log(err); });
                         }

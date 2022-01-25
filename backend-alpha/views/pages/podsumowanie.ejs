@@ -104,27 +104,23 @@ $(document).ready(function() {
 		
 		<table style="width:55%">
 			<tr>
-				<th colspan="3">Dane dotyczące Twojej rezerwacji</th>
+				<th colspan="3">Dane dotyczące Twojej rezerwacji numer <%= id %></th>
 			</tr>
 			<tr>
-				<td class="tablerow">Imię</td>
-				<td><%=item.imie %></td>
+				<td class="tablerow">Rower</td>
+				<td><%= rower %></td>
 			</tr>
 			<tr>
-				<td class="tablerow">Nazwisko</td>
-				<td><%=item.nazwisko %></td>
+				<td class="tablerow">Cennik</td>
+				<td><%= cennik %></td>
 			</tr>
 			<tr>
-				<td class="tablerow">Numer Telefonu</td>
-				<td><%=numer_telefonu %></td>
+				<td class="tablerow">Data rozpoczęcia</td>
+				<td><%= new Date(Date.parse(data_start)).toLocaleString("pl-PL")  %></td>
 			</tr>
 			<tr>
-				<td class="tablerow">Pesel</td>
-				<td><%=pesel %></td>
-			</tr>
-			<tr>
-				<td class="tablerow">Numer dowodu osobistego</td>
-				<td><%=numer_dowodu_osobistego %></td>
+				<td class="tablerow">Data zakończenia</td>
+				<td><%= new Date(Date.parse(data_koniec)).toLocaleString("pl-PL") %></td>
 			</tr>
 		</table>
 		
