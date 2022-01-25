@@ -77,7 +77,10 @@ CREATE TABLE `promocje` (
   `id_promocji` int unsigned NOT NULL AUTO_INCREMENT,
   `rodzaj_promocji` varchar(25) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `cena_znizki` float unsigned NOT NULL,
+  `id_aktualnosci` int unsigned NOT NULL,
   PRIMARY KEY (`id_promocji`)
+  KEY `id_aktualnosci` (`id_aktualnosci`),
+  CONSTRAINT `aktualnosci_ibfk_1` FOREIGN KEY (`id_aktualnosci`) REFERENCES `promocje` (`id_aktualnosci`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
