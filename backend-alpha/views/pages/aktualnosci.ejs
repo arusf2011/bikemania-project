@@ -106,80 +106,28 @@ $(document).ready(function() {
 	</div>
 
 	
-	// to do
+<!-- Tutaj chyba coś by bylo do poprawienia ale nie jestem w stanie znalezc co xd -->
 	<div id="newscontainter">
-		<%
-			if(aktu.length!=0){
-			var i=1;
-			aktu.forEach(function(data){
-			%>	
 			
-		<div id="news<%=i; >"></div>
+			<% aktual.forEach(akt => { %>
+		<div id="news<%=akt[0]; %>"></div>
 		<div class="newsblock">
 			
 			<div class="newstitle">
 				
-				<%=data.tytul_aktualnosci>
+				<p><%=akt[1] %></p>
+				<p><%=akt[2] %></p>
+				<p><%=akt[4] %></p>
 				
 			</div>
 			
 			<div class="newscontent">
 				
-				Dobór ramy ma ogromny wpływ na komfort jazdy, jednak nie jest on taki prosty w przypadku, gdy nie możemy na niego usiąść i po prostu wypróbować. Przez lata, została wypracowana metoda, która pomaga wybrać nam minimalną wielkość ramy. Przedstawia się ona następująco:
-				
-				<ol>
-					<li>Stajemy boso przy ścianie i mierzymy odległość między podłożem, a kroczem.</li>
-					<li>Uzyskany wynik mnożymy:
-						<ul>
-							<li>przez 0,57 w przypadku roweru górskiego,</li>
-							<li>przez 0,63 w przypadku roweru trekkingowego,</li>
-							<li>przez 0,66 przy rowerze szosowym</li>
-						</ul>
-					</li>
-					<li>Otrzymany wynik należy podzielić przez 2,54, aby uzyskać wartość w calach. Wartość ta, to rozmiar ramy, jakiej powinniśmy używać. Niestety trzeba pamiętać, że takie obliczenia są bardzo ogólne, biorąc pod uwagę ilość możliwych stylów jazdy, jakie stworzyła ludzkość. Ponadto sprawę utrudnia jeszcze długość roweru, która ma decydujący wpływ na pozycję na rowerze. Na szczęście na ten element możemy wpłynąć poprzez kilka manipulacji w naszym rowerze. Jeśli jesteśmy za bardzo „położeni” na rowerze, możemy zmienić wspornik kierownicy na krótszy lub też zmienić kierownicę na „giętą” o wysokim wzniosie. Takie zabiegi sprawią, że nasza pozycja na rowerze będzie bardziej wyprostowana i wygodna. Jeśli natomiast czujemy, że nasze ciało jest za bardzo odchylone do tyłu i przy podjazdach odczuwamy, że przednie koło ledwo dotyka podłoża lub się od niego odrywa to pomocne okaże się przesunięcie siodełka do przodu w jarzmie sztycy podsiodłowej.</li>
-				</ol>
+				<%=akt[3] %>
 			</div>
 			
-		</div>
-		
-		
-		<div id="news2"></div>
-		<div class="newsblock">
-			
-			<div class="newstitle">
-				
-				SPRAWDŹ NASZE ZNIŻKI DLA STUDENTÓW
-				
-			</div>
-			
-			<div class="newscontent">
-				
-				
-				
-			</div>
-			
-		</div>
-		
-		<div id="news3"></div>
-		<div class="newsblock">
-			
-			<div class="newstitle">
-				
-				ABONAMENT DLA WYMAGAJĄCYCH
-				
-			</div>
-			
-			<div class="newscontent">
-				
-				
-				
-			</div>
-			
-		</div>
-		
-		
-		
-		
+		</div>		
+		<% }) %>
 		
 			
 			

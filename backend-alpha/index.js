@@ -137,6 +137,26 @@ app.get('/nowa_rezerwacja',(req,res) => {
         res.redirect('/rezerwacje');
     }
 });
+app.get('/aktualnosci',(req,res) => {
+    if(req.session.loggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT * FROM aktualnosci')
+                    .then((rows) => {
+                        res.render('pages/aktualnosci',{
+                            aktual: rows
+                        });
+                    })
+                    .catch(err => { console.log(err); })
+            })
+            .catch(err => { console.log(err); })
+    }
+    else
+    {
+        res.redirect('/aktualnosci');
+    }
+});
 app.get('/serwis', (req,res) => {
     res.render('pages/serwis');
     console.log('Strona serwis została wyświetlona');
@@ -324,10 +344,6 @@ app.post('/oplac_wynajem',(req,res) => {
         .catch(err => { console.log(err); })
 
 });
-
-
-// to do
-
 app.post('/opublikowanie_aktualnosci',(req,res) => {
     tytul = req.body.tytul_aktualnosci;
     autor = req.body.autor_aktualnosci;
@@ -337,7 +353,7 @@ app.post('/opublikowanie_aktualnosci',(req,res) => {
             conn.query('INSERT INTO aktualnosci VALUES(NULL,?,?,?,NOW())',[tytul,autor,tresc])
             .then((rows) => {
                 req.session.success = 'Dodano aktualność!';
-                res.redirect('/aktualnosci');
+                res.redirect('pages/aktualnosci');
             })
             .catch(err => { console.log(err); });
         })
