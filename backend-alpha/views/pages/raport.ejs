@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf8" />
+  <meta name="Description" content=" [wstaw tu opis strony] " />
+  <meta name="Keywords" content=" [wstaw tu slowa kluczowe] " />
+  <meta name="Author" content=" [dane autora] " />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Raport - Bikemania </title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css"/>
+  <link rel="stylesheet" href="css/fontello.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans&display=swap" rel="stylesheet"> 
+  
+</head>
+<body>
+	<center>
+		<div id="logo">Bikemania <img src="img/logo.png" width="100"></div>
+	</center>
+		
+	
+	
+	<div id="content">
+		
+		<table style="width: 100%">
+			<thead>
+				<th>Numer rezerwacji</th>
+				<th>Wynajmujący</th>
+				<th>Rower</th>
+				<th>Od</th>
+				<th>Do</th>
+				<th>Cennik</th>
+				<th>Przejechane kilometry</th>
+				<th>Czy opłacone?</th>
+			</thead>
+			<tbody>
+				<% if(wypozyczenia == '') { %>
+					<tr>
+						<td colspan="6">Brak wynajętych rowerów</td>
+					</tr>
+				<% } else {
+					wypozyczenia.forEach((wypozyczenie) => { %>
+						<tr>
+							<td><%= wypozyczenie[0] %></td>
+							<td><%= wypozyczenie[1]+' '+wypozyczenie[2] %></td>
+							<td><%= wypozyczenie[4]+' - '+wypozyczenie[5]+' ('+wypozyczenie[3]+')' %></td>
+							<td><%= wypozyczenie[6].toLocaleString('pl-PL') %></td>
+							<td><%= wypozyczenie[7].toLocaleString('pl-PL') %></td>
+							<td>
+								<% if(wypozyczenie[9] == 1)	{ %>
+									Abonament dzienny
+								<% } else if(wypozyczenie[9] == 2) { %>	
+									Cennik minutowy
+								<% } else if(wypozyczenie[9] == 3) { %>	
+									Cennik kilometrowy
+								<% } else if(wypozyczenie[9] == 4) { %>	
+									Abonament miesięczny
+								<% } %>
+							</td>
+							<td><%= wypozyczenie[10] %></td>
+							<td>
+								<% if(wypozyczenie[8] == null) { %>
+									Nie
+								<% } else { %>
+									Opłacone - <%= wypozyczenie[8].toUpperCase() %>
+								<% } %>
+							</td>
+						</tr>
+					<% });
+				} %>
+			</tbody>
+		</table>
+
+		
+	</div>
+	
+		<div id="footer"> 
+			
+			<div id="footercontainer">
+			
+				<div class="footerblock">
+				
+					Bikemania 2021 &copy <br><br>					
+					
+					Najlepsze rowery w Gliwicach
+				
+				</div>
+			
+				<div class="footerblock">
+					
+					44-100 Gliwice<br>
+					ul. Kaszubska 23<br>
+					pokój 308<br><br>
+					
+					Tel.: 123 456 789<br>
+					email: kontakt@bikemania.pl
+					
+				</div>
+			
+			</div>
+			
+		</div>
+		
+</body>
+
+</html>

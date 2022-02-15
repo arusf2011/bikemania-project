@@ -109,25 +109,31 @@ $(document).ready(function() {
 <!-- Tutaj chyba coś by bylo do poprawienia ale nie jestem w stanie znalezc co xd -->
 	<div id="newscontainter">
 			
+			<% if(aktual != '') { %>
 			<% aktual.forEach(akt => { %>
 		<div id="news<%=akt[0]; %>"></div>
 		<div class="newsblock">
 			
 			<div class="newstitle">
 				
-				<p><%=akt[1] %></p>
-				<p><%=akt[2] %></p>
-				<p><%=akt[4] %></p>
+				<p><%=akt[1] %></p><br>
 				
 			</div>
 			
+			<div class="newstitle">
+				
+				<small><%= akt[2]+' - '+akt[4].toLocaleString('pl-PL') %></small>
+			</div>
+
 			<div class="newscontent">
 				
 				<%=akt[3] %>
 			</div>
 			
 		</div>		
-		<% }) %>
+		<% }) } else { %>
+			<p>Brak aktualności</p>	
+		<% } %>
 		
 			
 			

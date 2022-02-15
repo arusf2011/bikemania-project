@@ -99,111 +99,157 @@ $(document).ready(function() {
 
 		<div class="contentblock_wide">
 			<h1 style="color: #7dad2c;">Panel administracyjny</h1>		
-			<a href="/admin_logout"><button type="button" class="button_submit_red">Wyloguj</button></a>
-			<% if(success != '') { %>
-				<h3 style="color: #3dc407"><%= success %></h3>
-				<p>Opłać wynajem</p>
-				<% if(id_wypozyczenia != 0) { %>
-					<form method="post" action="/oplac_wynajem">
-						<select class="inputbox" style="width: 120px;" name="metoda">
-							<option value="karta">Karta/BLIK</option>
-							<option value="gotówka">Gotówka</option>
-							<option value="voucher">Voucher</option>
-						</select>
-						<input type="hidden" name="id_wypozyczenia" value="<%= id_wypozyczenia %>">
-						<button class="button_submit_orange">Opłać</button>
-					</form>
-				<% } %>
-			<% } %>
-			
+			<a href="/admin_logout" class="button_submit_red">Wyloguj</a>
+			<a href="/raport" class="button_submit_orange">Raport</a>
 		</div>
 	
 	<div id="admincontainter">
 			
-			
-		<div class="adminblock">
-			
-			<div class="admintitle">
-				
-				Anulowanie rezerwacji
-				
-			</div>
-			
-			<div class="admincontent">
-				<form method="post" action="/anuluj_rezerwacje">
-					<p style="color: #d43232"><b>UWAGA!</b> Poinformuj klienta, że ta akcja jest nieodwracalna!</p>
-					<p>Numer rezerwacji</p>
-					<input type="number" class="inputbox" name="id_wypozyczenia" required>
-					<button type="submit" class="button_submit" style="background-color: #c90606;">Anuluj rezerwację</button>
-				</form>
-			</div>
-			
-		</div>
-		
-		<div class="adminblock">
-			
-			<div class="admintitle">
-				
-				Rozpoczęcie wynajmu
-				
-			</div>
-			
-			<div class="admincontent">
-				<form method="post" action="/rozpoczecie_wynajmu">
-					<p>Numer rezerwacji</p>
-					<input type="number" class="inputbox" name="id_wypozyczenia" required>
-					<button type="submit" class="button_submit">Rozpocznij wynajem</button>
-				</form>
-			</div>
-			
-		</div>
-		
-		
-		<div class="adminblock">
-			
-			<div class="admintitle">
-				
-				Zakończenie wynajmu
-				
-			</div>
-			
-			<div class="admincontent">
-				<form method="post" action="/zakonczenie_wynajmu">
-					<p>Przed płatnością <b>zakończ wynajem!</b> Ostateczna kwota na tej podstawie zostanie wyliczona!</p>
-					<p>Numer rezerwacji</p>
-					<input type="number" class="inputbox" name="id_wypozyczenia" required>
-					<button type="submit" class="button_submit">Zakończ wynajem</button>
-				</form>
-			</div>
-			
-		</div>
-		
-		
-		<div class="adminblock">
-			
-			<div class="admintitle">
-				
-				Dodanie aktualności
-				
-			</div>			
+		<h4>Wypożyczenia</h4>
+		<table style="width: 100%">
+			<thead>
+				<th>Numer rezerwacji</th>
+				<th>Wynajmujący</th>
+				<th>Rower</th>
+				<th>Od</th>
+				<th>Do</th>
+				<th>Akcje</th>
+			</thead>
+			<tbody>
+				<% if(wypozyczenia == '') { %>
+					<tr>
+						<td colspan="6">Brak wynajętych rowerów</td>
+					</tr>
+				<% } else {
+					wypozyczenia.forEach((wypozyczenie) => { %>
+						<tr>
+							<td><%= wypozyczenie[0] %></td>
+							<td><%= wypozyczenie[1]+' '+wypozyczenie[2] %></td>
+							<td><%= wypozyczenie[4]+' - '+wypozyczenie[5]+' ('+wypozyczenie[3]+')' %></td>
+							<td><%= wypozyczenie[6].toLocaleString('pl-PL') %></td>
+							<td><%= wypozyczenie[7].toLocaleString('pl-PL') %></td>
+							<td>
+								<% if(wypozyczenie[8] == null) { %>
+									<a href="/oplac_wynajem/<%= wypozyczenie[0] %>" class="button_submit_orange" style="text-decoration: none;">Opłać</a>
+									<a href="/anuluj_rezerwacje/<%= wypozyczenie[0] %>" class="button_submit_red" style="text-decoration: none;">Anuluj</a>
+								<% } else { %>
+									<p class="button_submit_orange">Opłacone</p>
+								<% } %>
+							</td>
+						</tr>
+					<% });
+				} %>
+			</tbody>
+		</table>
 
-			<div class="admincontent">
-				<form method="post" action="/opublikowanie_aktualnosci">
-					<p>Tytuł</p>
-					<input type="text" class="inputbox" name="tytul_aktualnosci" required>
-					<p>Autor</p>
-					<input type="text" class="inputbox" name="autor_aktualnosci" required>
-					<p>Treść</p>
-					<input type="text" class="inputbox" name="tresc_aktualnosci" required>
-					<button type="submit" class="button_submit">Opublikuj</button>
-				</form>
-			</div>
-			
-		</div>
-		
-		
-		
-			
+		<p style="float:left;margin-left: 0;margin-right: auto;">Magazyny</p>
+		<a href="/dodaj_magazyn" class="button_submit" style="margin-left: auto;margin-top: 0;margin-bottom: 0;float: right; text-decoration: none;">Dodaj magazyn</a>
+		<table style="width: 100%;">
+			<thead>
+				<th>Magazyn</th>
+				<th>Nazwa magazynu</th>
+				<th>Rozmiar magazynu</th>
+				<th>Stan zajętości</th>
+				<th>Akcje</th>
+			</thead>
+			<tbody>
+				<% if(magazyny == '') { %>
+					<tr>
+						<td colspan="6">Brak magazynów</td>
+					</tr>
+				<% } else {
+					magazyny.forEach((magazyn) => { %>
+						<tr>
+							<td><%= magazyn[0] %></td>
+							<td><%= magazyn[1] %></td>
+							<td><%= magazyn[2] %></td>
+							<td>
+								<% 
+									switch(magazyn[3])
+									{
+										case 'empty':
+											%>pusty<%
+											break;
+										case 'full':
+											%>pełny<%
+											break;
+										case 'medium':
+											%>Umiarkowany<%
+											break;
+									}
+								%>
+							</td>
+							<td>
+								<a href="/edytuj_magazyn/<%= magazyn[0] %>" class="button_submit_orange" style="text-decoration: none;">Edytuj</a>
+								<a href="/usun_magazyn/<%= magazyn[0] %>" class="button_submit_red" style="text-decoration: none;">Usuń</a>
+							</td>
+						</tr>
+					<% });
+				} %>
+			</tbody>
+		</table>
+
+		<p style="float:left;margin-left: 0;margin-right: auto;">Rowery</p>
+		<a href="/dodaj_rower" class="button_submit" style="margin-left: auto;margin-top: 0;margin-bottom: 0;float: right; text-decoration: none;">Dodaj rower</a>
+		<table style="width: 100%;">
+			<thead>
+				<th style="width: 15%">Numer roweru</th>
+				<th>Typ</th>
+				<th>Model</th>
+				<th>Należy do magazynu</th>
+				<th>Akcje</th>
+			</thead>
+			<tbody>
+				<% if(rowery == '') { %>
+					<tr>
+						<td colspan="6">Brak rowerów</td>
+					</tr>
+				<% } else {
+					rowery.forEach((rower) => { %>
+						<tr>
+							<td><%= rower[0] %></td>
+							<td><%= rower[1] %></td>
+							<td><%= rower[2] %></td>
+							<td><%= rower[3] %></td>
+							<td>
+								<a href="/edytuj_rower/<%= rower[0] %>" class="button_submit_orange" style="text-decoration: none;">Edytuj</a>
+								<a href="/usun_rower/<%= rower[0] %>" class="button_submit_red" style="text-decoration: none;">Usuń</a>
+							</td>
+						</tr>
+					<% });
+				} %>
+			</tbody>
+		</table>
+
+		<p style="float:left;margin-left: 0;margin-right: auto;">Aktualności</p>
+		<a href="/dodaj_aktualnosc" class="button_submit" style="margin-left: auto;margin-top: 0;margin-bottom: 0;float: right; text-decoration: none;">Dodaj aktualność</a>
+		<table style="width: 100%;">
+			<thead>
+				<th style="width: 15%">Numer aktualności</th>
+				<th>Tytuł</th>
+				<th>Autor</th>
+				<th>Akcje</th>
+			</thead>
+			<tbody>
+				<% if(aktualnosci == '') { %>
+					<tr>
+						<td colspan="6">Brak aktualności</td>
+					</tr>
+				<% } else {
+					aktualnosci.forEach((aktualnosc) => { %>
+						<tr>
+							<td><%= aktualnosc[0] %></td>
+							<td><%= aktualnosc[1] %></td>
+							<td><%= aktualnosc[2] %></td>
+							<td>
+								<a href="/edytuj_aktualnosc/<%= aktualnosc[0] %>" class="button_submit_orange" style="text-decoration: none;">Edytuj</a>
+								<a href="/usun_aktualnosc/<%= aktualnosc[0] %>" class="button_submit_red" style="text-decoration: none;">Usuń</a>
+							</td>
+						</tr>
+					<% });
+				} %>
+			</tbody>
+		</table>
 			
 	</div>
 	

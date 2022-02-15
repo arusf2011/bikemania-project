@@ -111,16 +111,19 @@ $(document).ready(function() {
 			<h1 style="color: #7dad2c;">Nie jesteś użytkownikiem naszej wypożyczalni?</h1>
 			<p>Stwórz konto w naszym serwisie!</p>
 			<form method="post" action="/register_user">
-				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko"><br>
-				<input class="inputbox" type="text" name="imie" placeholder="Imię"><br>
-				<input class="inputbox" type="tel" name="telefon" placeholder="Numer telefonu" maxlength="9"><br>
-				<input class="inputbox" type="password" name="pesel" placeholder="PESEL" maxlength="11"><br>
-				<input class="inputbox" type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego" maxlength="9"><br>
+				<input class="inputbox" type="text" name="nazwisko" placeholder="Nazwisko" required><br>
+				<input class="inputbox" type="text" name="imie" placeholder="Imię" required><br>
+				<input class="inputbox" type="tel" name="telefon" placeholder="Numer telefonu" maxlength="9" required><br>
+				<input class="inputbox" type="password" name="pesel" placeholder="PESEL" maxlength="11" required><br>
+				<input class="inputbox" type="password" name="nr_dowodu" placeholder="Numer dowodu osobistego" maxlength="9" required><br>
+				<span><input type="checkbox" name="rodo_polityk" required> Rejestrując się, akceptuję <a href="/regulamin">regulamin</a> oraz wyrażam zgodę na <a href="polityka_prywatnosc">politykę prywatności</a>.</span>
 				<button class="button_submit" type="submit">Zarejestruj się!</button>
 			</form>
 		</div>
 
-		
+		<p>Administratorem danych osobowych jest Bikemania sp. z o.o.<br>
+		z siedzibą przy ulicy Kaszubskiej 23 (pokój 308), 44-100 Gliwice<br>
+		NIP - 1234567890</p>
 	</div>
 	
 		<div id="footer"> 

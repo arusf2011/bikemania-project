@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { count } = require('console');
 const { check, validationResult } = require('express-validator');
+const { connect } = require('http2');
+const { emitWarning } = require('process');
 // Inicjacja aplikacji
 const app = express();
 app.use(express.json())
@@ -23,21 +25,17 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 const pool = mariadb.createPool({
-    host: 'xxxxx',
-    user: 'xxxxx',
-    password: 'xxxxx',
-    database: 'xxxxx',
-    port: 0,
+    host: 'srv07.mikr.us',
+    user: 'bikemania-test',
+    password: 'JoLJCXG54R7*aXQ7',
+    database: 'bikemania_test',
+    port: 20362,
     rowsAsArray: true
 });
 // Po inicjacji przechodzę do generowania widoków stron
 app.get('/', (req,res) => {
     res.render('pages/index');
     console.log('Strona index została wyświetlona');
-});
-app.get('/aktualnosci', (req,res) => {
-    res.render('pages/aktualnosci');
-    console.log('Strona aktualnosci została wyświetlona');
 });
 app.get('/cennik', (req,res) => {
     res.render('pages/cennik');
@@ -183,7 +181,7 @@ app.post('/nowa_rezerwacja',(req,res) => {
         id_uzytkownika = req.session.id_uzytkownika;
         pool.getConnection()
             .then((conn) => {
-                conn.query('INSERT INTO wypozyczenia VALUES(null,?,?,?,?,0,?,null,1,null)',[rower,id_uzytkownika,data_start,data_koniec,cennik])
+                conn.query('INSERT INTO wypozyczenia VALUES(null,?,?,?,?,1,?,null,1,null)',[rower,id_uzytkownika,data_start,data_koniec,cennik])
                     .then((result) => {
                         req.session.data_start = data_start;
                         req.session.data_koniec = data_koniec;
@@ -202,29 +200,24 @@ app.post('/nowa_rezerwacja',(req,res) => {
     }
 });
 app.get('/aktualnosci',(req,res) => {
-    if(req.session.loggedIn)
-    {
-        pool.getConnection()
-            .then((conn) => {
-                conn.query('SELECT * FROM aktualnosci')
-                    .then((rows) => {
-                        res.render('pages/aktualnosci',{
-                            aktual: rows
-                        });
-                    })
-                    .catch(err => { console.log(err); })
-            })
-            .catch(err => { console.log(err); })
-    }
-    else
-    {
-        res.redirect('/aktualnosci');
-    }
+    pool.getConnection()
+        .then((conn) => {
+            conn.query('SELECT * FROM aktualnosci')
+                .then((rows) => {
+                    res.render('pages/aktualnosci',{
+                        aktual: rows
+                    });
+                    console.log('Strona aktualnosci została wyświetlona');
+                })
+                .catch(err => { console.log(err); })
+        })
+        .catch(err => { console.log(err); })
 });
 app.get('/serwis', (req,res) => {
     res.render('pages/serwis');
     console.log('Strona serwis została wyświetlona');
 });
+// Podsumowanie rezerwacji
 app.get('/podsumowanie_rezerwacja', (req,res) => {
     var cennik_txt = '';
     if(req.session.cennik == 1)
@@ -263,11 +256,13 @@ app.get('/podsumowanie_rezerwacja', (req,res) => {
         })
         .catch(err => { console.log(err); });
 });
+// Panel administracyjny
+/// Logowanie
 app.get('/admin_login',(req,res) => {
-    if(req.session.errors != ' ')
+    if(req.session.errors != null)
     {
         errors_arr = req.session.errors;
-        req.session.errors = ' ';
+        req.session.errors = null;
         res.render('pages/admin_login',{
             errors: errors_arr
         });
@@ -276,16 +271,17 @@ app.get('/admin_login',(req,res) => {
     else
     {
         res.render('pages/admin_login',{
-            errors: ' '
+            errors: ''
         })
     }
 });
+/// Autentykacja
 app.post('/auth_admin',[
     check('nazwa_uzytkownika')
         .equals("admin")
         .withMessage('Nieprawidłowa nazwa użytkownika'),
     check('haslo')
-        .equals('xxxxxx')
+        .equals('7apg#8TtLuK5Zd%t')
         .withMessage('Nieprawidłowe hasło')
 ],(req,res) => {
     const errors = validationResult(req);
@@ -300,120 +296,80 @@ app.post('/auth_admin',[
         res.redirect('/admin_login');
     }
 });
+/// Wylogowywanie
 app.get('/admin_logout',(req,res) => {
     req.session.adminLoggedIn = false;
     res.redirect('/');
 });
+/// Panel administracyjny
 app.get('/admin_dash',(req,res) => {
     if(req.session.adminLoggedIn)
     {
-        if(req.session.anuluj_wypozyczenie == true)
-        {
-            succ = "Wynajem numer "+req.session.id_wypozyczenia+" zostało anulowane!";
-            req.session.anuluj_wypozyczenie = null;
-            req.session.id_wypozyczenia = null;
-            res.render('pages/admin_dash',{
-                success: succ,
-                id_wypozyczenia: 0
-            });
-        }
-        else if(req.session.rozpoczecie_wynajmu == true)
-        {
-            succ = "Wynajem numer "+req.session.id_wypozyczenia+" zostało rozpoczęte!";
-            req.session.rozpoczecie_wynajmu = null;
-            req.session.id_wypozyczenia = null;
-            res.render('pages/admin_dash',{
-                success: succ,
-                id_wypozyczenia: 0
-            });
-        }
-        else if(req.session.oplacenie_wynajmu == true)
-        {
-            succ = "Wynajem numer "+req.session.id_wypozyczenia+" zostało opłacone!";
-            req.session.rozpoczecie_wynajmu = null;
-            req.session.id_wypozyczenia = null;
-            res.render('pages/admin_dash',{
-                success: succ,
-                id_wypozyczenia: 0
-            });
-        }
-
-        // to do
-
-        else if(req.session.opublikowanie_aktualnosci == true)
-        {
-            succ = "Aktualność "+req.session.tytul_aktualnosci+" została opublikowana!";
-            req.session.opublikowanie_aktualnosci = null;
-            req.session.tytul_aktualnosci = null;
-            req.session.autor_aktualnosci = null;
-            req.session.tresc_aktualnosci = null;           
-            res.render('pages/admin_dash',{
-                success: succ,
-                tytul_aktualnosci: 0,
-                autor_aktualnosci: 0,
-                tresc_aktualnosci: 0
-            });
-        }
-        else if(req.session.zakonczenie_wynajmu != '')
-        {
-            if(req.session.id_wypozyczenia != null)
-            {
-                succ = req.session.zakonczenie_wynajmu;
-                id_w = req.session.id_wypozyczenia;
-                req.session.zakonczenie_wynajmu = null;
-                req.session.id_wypozyczenia = null;
-                res.render('pages/admin_dash',{
-                    success: succ,
-                    id_wypozyczenia: id_w
-                });
-            }
-            else
-            {
-                succ = req.session.zakonczenie_wynajmu;
-                req.session.zakonczenie_wynajmu = null;
-                res.render('pages/admin_dash',{
-                    success: succ,
-                    id_wypozyczenia: 0
-                });
-            }
-
-            }
-        else
-        {
-            res.render('pages/admin_dash',{
-                success: '',
-                id_wypozyczenia: 0
-            });
-        }
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT id_wypozyczenia, imie, nazwisko, wypozyczenia.id_roweru, model, typ_roweru, data_rozpoczecia, data_zakonczenia, czy_oplacone FROM wypozyczenia JOIN rowery ON wypozyczenia.id_roweru = rowery.id_roweru JOIN uzytkownicy ON wypozyczenia.id_uzytkownika = uzytkownicy.id_uzytkownika')
+                    .then((rows) => {
+                        wypozyczenia_arr = rows;
+                        conn.query('SELECT * FROM aktualnosci')
+                            .then((rows) => {
+                                aktualnosci_arr = rows;
+                                conn.query('SELECT * FROM magazyny')
+                                    .then((rows) => {
+                                        magazyny_arr = rows;
+                                        conn.query('SELECT * FROM rowery')
+                                            .then((rows) => {
+                                                res.render('pages/admin_dash',{
+                                                    wypozyczenia: wypozyczenia_arr,
+                                                    magazyny: magazyny_arr,
+                                                    aktualnosci: aktualnosci_arr,
+                                                    rowery: rows
+                                                });
+                                                conn.end();
+                                            })
+                                            .catch(err => { console.log(err); conn.end(); });
+                                    })
+                                    .catch(err => { console.log(err); conn.end(); });
+                            })
+                            .catch(err => { console.log(err); conn.end(); });
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
     }
     else
     {
         res.redirect('/admin_login');
     }
 });
-app.post('/rozpoczecie_wynajmu',(req,res) => {
-    id_wypozyczenia = req.body.id_wypozyczenia;
+app.get('/raport',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT id_wypozyczenia, imie, nazwisko, wypozyczenia.id_roweru, model, typ_roweru, data_rozpoczecia, data_zakonczenia, czy_oplacone, nr_cennika, przejechane_km FROM wypozyczenia JOIN rowery ON wypozyczenia.id_roweru = rowery.id_roweru JOIN uzytkownicy ON wypozyczenia.id_uzytkownika = uzytkownicy.id_uzytkownika')
+                    .then((rows) => {
+                        res.render('pages/raport',{
+                            wypozyczenia: rows
+                        });
+                    })
+                    .catch(err => {console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); })
+
+    }
+    else
+    {
+        res.redirect('/admin_login')
+    }
+})
+// Zarządzanie rezerwacjami
+/// Anulowanie rezerwacji
+app.get('/anuluj_rezerwacje/:id',(req,res) => {
+    id_wypozyczenia = req.params.id;
     pool.getConnection()
         .then((conn) => {
-            conn.query('UPDATE wypozyczenia SET data_rozpoczecia = NOW() WHERE id = ?',id_wypozyczenia)
+            conn.query('DELETE FROM wypozyczenia WHERE id_wypozyczenia = ?',id_wypozyczenia)
                 .then((rows) => {
-                    req.session.rozpoczecie_wynajmu = true;
-                    req.session.id_wypozyczenia = id_wypozyczenia;
-                    res.redirect('/admin_dash');
-                    conn.end();
-                })
-                .catch(err => { console.log(err); })
-                conn.end();
-        })
-        .catch(err => { console.log(err); })
-});
-app.post('/anuluj_rezerwacje',(req,res) => {
-    id_wypozyczenia = req.body.id_wypozyczenia;
-    pool.getConnection()
-        .then((conn) => {
-            conn.query('DELETE FROM wypozyczenia WHERE id = ?',id_wypozyczenia)
-                .then((rows) => {
-                    req.session.anuluj_wypozyczenie = true;
                     res.redirect('/admin_dash');
                     conn.end();
                 })
@@ -422,16 +378,17 @@ app.post('/anuluj_rezerwacje',(req,res) => {
         })
         .catch(err => { console.log(err); })
 });
-app.post('/oplac_wynajem',(req,res) => {
-    id_wypozyczenia = req.body.id_wypozyczenia;
-    metoda = req.body.metoda;
+/// Opłacenie wynajmu
+//// Generowanie formularza do opłacenia wynajmu
+app.get('/oplac_wynajem/:id',(req,res) => {
+    id_wypozyczenia = req.params.id;
     pool.getConnection()
         .then((conn) => {
-            conn.query('UPDATE wypozyczenia SET platnosc = ? WHERE id = ?',[metoda,id_wypozyczenia])
+            conn.query('SELECT nr_cennika, data_rozpoczecia, data_zakonczenia, id_wypozyczenia FROM wypozyczenia WHERE id_wypozyczenia = ?',id_wypozyczenia)
                 .then((rows) => {
-                    req.session.oplacenie_wynajmu = true;
-                    req.session.id_wypozyczenia = id_wypozyczenia;
-                    res.redirect('/admin_dash');
+                    res.render('pages/oplac_wynajem',{
+                        wynajem: rows[0]
+                    });
                     conn.end();
                 })
                 .catch(err => { console.log(err); });
@@ -440,553 +397,361 @@ app.post('/oplac_wynajem',(req,res) => {
         .catch(err => { console.log(err); });
 
 });
-app.post('/opublikowanie_aktualnosci',(req,res) => {
-    tytul = req.body.tytul_aktualnosci;
-    autor = req.body.autor_aktualnosci;
-    tresc = req.body.tresc_aktualnosci;
+//// Opłacenie wynajmu w bazie danych
+app.post('/oplac_wynajem',(req,res) => {
     pool.getConnection()
         .then((conn) => {
-            conn.query('INSERT INTO aktualnosci VALUES(NULL,?,?,?,NOW())',[tytul,autor,tresc])
+            conn.query('UPDATE wypozyczenia SET przejechane_km = ?, cena_ostateczna = ?, czy_oplacone = ? WHERE id_wypozyczenia = ?',[
+                req.body.przejechane_km,
+                req.body.cena_ostateczna,
+                req.body.czy_oplacone,
+                req.body.id_wypozyczenia
+            ])
             .then((rows) => {
-                res.redirect('/aktualnosci');
+                res.redirect('/admin_dash');
             })
-            .catch(err => { console.log(err); });
-            conn.end();
+            .catch(err => { console.log(err); conn.end(); });
         })
         .catch(err => { console.log(err); });
 });
-app.post('/zakonczenie_wynajmu',(req,res) => {
-    id_wypozyczenia = req.body.id_wypozyczenia;
-    przejechane_kilometry = req.body.przejechane_kilometry;
-    koszt = 0;
-    pool.getConnection()
-        .then((conn) => {
-            conn.query('SELECT * FROM wypozyczenia JOIN rowery ON wypozyczenia.id_roweru = rowery.id_roweru WHERE id_wypozyczenia = ?',id_wypozyczenia)
+// Zarządzenia aktualnościami
+/// Dodawanie aktualności
+//// Generowanie formularza do dodawania aktualności
+app.get('/dodaj_aktualnosc',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        res.render('pages/dodaj_aktualnosc');
+    }
+    else
+    {
+        res.redirect('/admin_login');
+    }
+});
+//// Dodawanie aktualności do bazy danych
+app.post('/opublikowanie_aktualnosci',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        tytul = req.body.tytul_aktualnosci;
+        autor = req.body.autor_aktualnosci;
+        tresc = req.body.tresc_aktualnosci;
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('INSERT INTO aktualnosci VALUES(NULL,?,?,?,NOW())',[tytul,autor,tresc])
                 .then((rows) => {
-                    if(rows[0][6] == 1 || rows[0][6] == 4)
-                    {
-                        switch(rows[0][6])
-                        {
-                            case 1:
-                                pool.getConnection()
-                                    .then((conn2) => {
-                                        conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 0, platnosc = "abonament całodniowy" WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (abonament całodniowy)";
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                    })
-                                    .catch(err => { console.log(err); });
-                                break;
-                            case 4:
-                                pool.getConnection()
-                                    .then((conn2) => {
-                                        conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 0, platnosc = "abonament miesięczny" WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (abonament miesięczny)";
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                    })
-                                    .catch(err => { console.log(err); });
-                                break;
-                            default:
-                                break;
-                        }
-                        
-                    }
-                    else if(rows[0][6] == 2)
-                    {
-                        data_rozpoczecia = rows[0][3].getTime();
-                        var now = new Date.getTime();
-                        var distance = now - data_rozpoczecia;
-                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24))/-(1000 * 60 * 60));
-                        var minutes = Math.floor((distance % (1000 * 60 * 60))/-(1000 * 60));
-                        if(hours == 0 && minutes < 15)
-                        {
-                            pool.getConnection()
-                                .then((conn2) => {
-                                    conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 0, platnosc = "voucher" WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                        .then((rows1) => {
-                                            req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony i opłacony. (bezpłatny przejazd do 15 minut)";
-                                            res.redirect('/admin_dash');
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                        conn2.end();
-                                        conn.end();
-                                })
-                                .catch(err => { console.log(err); });
-                        }
-                        else if((hours == 1 && minutes == 0) || (minutes >= 15 && hours < 1))
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 10 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                                .then((rows1) => {
-                                                    req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 10 zł.";
-                                                    req.session.id_wypozyczenia = id_wypozyczenia;
-                                                    res.redirect('/admin_dash');
-                                                    conn2.end();
-                                                    conn.end();
-                                                })
-                                                .catch(err => { console.log(err); });
-                                                conn2.end();
-                                                conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'szosowy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 5 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 5 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'miejski':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 5 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 5 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'dziecięcy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 3 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 3 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else if((hours == 2 && minutes == 0) || (minutes > 0 && hours == 1))
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 17 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 17 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'szosowy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 9 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 9 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'miejski':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 9 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 9 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'dziecięcy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 6 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 6 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else if((hours == 3 && minutes == 0) || (minutes > 0 && hours == 2))
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 24 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 24 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'szosowy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 13 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 13 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'miejski':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 13 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 13 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'dziecięcy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 8 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 8 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    koszt = 24 + 7 * (hours - 3);
-                                    break;
-                                case 'szosowy':
-                                    koszt = 13 + 5 * (hours - 3);
-                                    break;
-                                case 'miejski':
-                                    koszt = 13 + 5 * (hours - 3);
-                                    break;
-                                case 'dziecięcy':
-                                    koszt = 8 + 2 * (hours - 3);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            pool.getConnection()
-                                .then((conn2) => {
-                                    conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = ? WHERE id_wypozyczenia = ?',[koszt,id_wypozyczenia])
-                                    .then((rows1) => {
-                                        req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę "+koszt+" zł.";
-                                        req.session.id_wypozyczenia = id_wypozyczenia;
-                                        res.redirect('/admin_dash');
-                                        conn2.end();
-                                        conn.end();
-                                    })
-                                    .catch(err => { console.log(err); });
-                                    conn2.end();
-                                    conn.end();
-                                })
-                                .catch(err => { console.log(err); });
-                        }
-                    }
-                    else if(rows[0][6] == 3)
-                    {
-                        if(przejechane_kilometry <= 5)
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 20 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'szosowy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 16 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 16 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'miejski':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 16 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 16 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'dziecięcy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 12 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 12 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else if(przejechane_kilometry > 5 && przejechane_kilometry <= 10)
-                        {
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 30 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 30 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'szosowy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 20 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'miejski':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 20 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 20 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                case 'dziecięcy':
-                                    pool.getConnection()
-                                        .then((conn2) => {
-                                            conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = 12 WHERE id_wypozyczenia = ?',id_wypozyczenia)
-                                            .then((rows1) => {
-                                                req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę 12 zł.";
-                                                req.session.id_wypozyczenia = id_wypozyczenia;
-                                                res.redirect('/admin_dash');
-                                                conn2.end();
-                                                conn.end();
-                                            })
-                                            .catch(err => { console.log(err); });
-                                            conn2.end();
-                                            conn.end();
-                                        })
-                                        .catch(err => { console.log(err); });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            przejechane_kilometry -= 10;
-                            switch(rows[0][11])
-                            {
-                                case 'elektryczny':
-                                    koszt = 30 + przejechane_kilometry;
-                                    break;
-                                case 'szosowy':
-                                    koszt = 20 + przejechane_kilometry * 0.8;
-                                    break;
-                                case 'miejski':
-                                    koszt = 20 + przejechane_kilometry * 0.8;
-                                    break;
-                                case 'dziecięcy':
-                                    koszt = 12 + przejechane_kilometry * 0.4;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            pool.getConnection()
-                                .then((conn2) => {
-                                    conn2.query('UPDATE wypozyczenia SET data_zakonczenia = NOW(), koszt = ? WHERE id_wypozyczenia = ?',[koszt,id_wypozyczenia])
-                                    .then((rows1) => {
-                                        req.session.zakonczenie_wynajmu = "Wynajem nr "+id_wypozyczenia+" zakończony. Klient musi uiścić opłatę "+koszt+" zł.";
-                                        req.session.id_wypozyczenia = id_wypozyczenia;
-                                        res.redirect('/admin_dash');
-                                        conn2.end();
-                                        conn.end();
-                                    })
-                                    .catch(err => { console.log(err); });
-                                    conn2.end();
-                                    conn.end();
-                                })
-                                .catch(err => { console.log(err); });
-                        }
-                    }
+                    res.redirect('/aktualnosci');
                 })
-                .catch(err => { console.log(err); })
-        })
-        .catch(err => { console.log(err); })
+                .catch(err => { console.log(err); });
+                conn.end();
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_login');
+    }
+});
+/// Edycja aktualności
+//// Pobieranie danych do formularza
+app.get('/edytuj_aktualnosc/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT * FROM aktualnosci WHERE id_aktualnosci = ?',req.params.id)
+                    .then((rows) => {
+                        res.render('pages/edytuj_aktualnosc',{
+                           aktualnosc: rows[0]
+                        });
+                        conn.end();
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err);});
+    }
+    else
+    {
+        res.redirect('/admin_login');
+    }
+});
+//// Edycja danych w bazie danych
+app.post('/edytuj_aktualnosc',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('UPDATE aktualnosci SET tytul_aktualnosci = ?, autor_aktualnosci = ?, tresc_aktualnosci = ? WHERE id_aktualnosci = ?',[
+                    req.body.tytul_aktualnosci,
+                    req.body.autor_aktualnosci,
+                    req.body.tresc_aktualnosci,
+                    req.body.id_aktualnosci
+                ])
+                .then((rows) => {
+                    res.redirect('/admin_dash');
+                })
+                .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_login');
+    }
+})
+/// Usuwanie aktualności
+app.get('/usun_aktualnosc/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('DELETE FROM aktualnosci WHERE id_aktualnosci = ?',req.params.id)
+                    .then((rows) => {
+                        res.redirect('/admin_dash');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        conn.end();
+                    })
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_login');
+    }
+});
+// Zarządzanie magazynami
+/// Dodawanie magazynu
+//// Generowanie formularza do dodawania magazynu
+app.get('/dodaj_magazyn',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        res.render('pages/dodaj_magazyn');
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+
+});
+//// Dodawanie magazynu do bazy danych
+app.post('/dodaj_magazyn',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('INSERT INTO magazyny VALUES(NULL,?,?,?)',[
+                    req.body.nazwa_magazynu,
+                    req.body.rozmiar_magazynu,
+                    req.body.stan_magazynu
+                ])
+                .then((rows) => {
+                    res.redirect('/admin_dash');
+                })
+                .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+/// Edycja magazynu
+//// Generowanie formularza do edycji magazynu
+app.get('/edytuj_magazyn/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT * FROM magazyny WHERE id_magazynu = ?',req.params.id)
+                    .then((rows) => {
+                        res.render('pages/edytuj_magazyn',{
+                           magazyn: rows[0]
+                        });
+                        conn.end();
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err);});
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+//// Edycja magazynu w bazie danych
+app.post('/edytuj_magazyn',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('UPDATE magazyny SET nazwa_magazynu = ?, rozmiar_magazynu = ?, stan_magazynu = ? WHERE id_magazynu = ?',[
+                    req.body.nazwa_magazynu,
+                    req.body.rozmiar_magazynu,
+                    req.body.stan_magazynu,
+                    req.params.id
+                ])
+                .then((rows) => {
+                    res.redirect('/admin_dash');
+                })
+                .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+/// Usuwanie magazynu
+app.get('/usun_magazyn/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('DELETE FROM magazyny WHERE id_magazynu = ?',req.params.id)
+                    .then((rows) => {
+                        res.redirect('/admin_dash');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        conn.end();
+                    })
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+});
+// Zarządzanie rowerami
+/// Dodawanie roweru
+//// Generowanie formularza do dodawania roweru
+app.get('/dodaj_rower',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT * FROM magazyny')
+                    .then((rows) => {
+                        res.render('pages/dodaj_rower',{
+                            magazyny: rows
+                        });
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+
+});
+//// Dodawanie roweru do bazy danych
+app.post('/dodaj_rower',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('INSERT INTO rowery VALUES(NULL,?,?,?)',[
+                    req.body.model,
+                    req.body.typ_roweru,
+                    req.body.id_magazynu
+                ])
+                .then((rows) => {
+                    res.redirect('/admin_dash');
+                })
+                .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+/// Edycja roweru
+//// Generowanie formularza do edycji roweru
+app.get('/edytuj_rower/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT * FROM rowery WHERE id_roweru = ?',req.params.id)
+                    .then((rows) => {
+                        rower_arr = rows[0];
+                        conn.query('SELECT * FROM magazyny')
+                            .then((rows) => {
+                                res.render('pages/edytuj_rower',{
+                                   rower: rower_arr,
+                                   magazyny: rows
+                                });
+                                conn.end();
+                            })
+                            .catch(err => { console.log(err); conn.end(); })
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err);});
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+//// Edycja roweru w bazie danych
+app.post('/edytuj_rower',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('UPDATE rowery SET model = ?, typ_roweru = ?, id_magazynu = ? WHERE id_roweru = ?',[
+                    req.body.model,
+                    req.body.typ_roweru,
+                    req.body.id_magazynu,
+                    req.params.id
+                ])
+                .then((rows) => {
+                    res.redirect('/admin_dash');
+                })
+                .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
+    
+});
+/// Usuwanie roweru
+app.get('/usun_rower/:id',(req,res) => {
+    if(req.session.adminLoggedIn)
+    {
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('DELETE FROM rowery WHERE id_roweru = ?',req.params.id)
+                    .then((rows) => {
+                        res.redirect('/admin_dash');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        conn.end();
+                    })
+            })
+            .catch(err => { console.log(err); });
+    }
+    else
+    {
+        res.redirect('/admin_dash');
+    }
 });
 
 // Konfiguracja serwera
