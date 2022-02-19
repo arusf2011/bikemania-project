@@ -25,12 +25,12 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 const pool = mariadb.createPool({
-    host: 'srv07.mikr.us',
-    user: 'bikemania-test',
-    password: 'JoLJCXG54R7*aXQ7',
-    database: 'bikemania_test',
-    port: 20362,
-    rowsAsArray: true
+    host: 'xxxxx', // nazwa hosta lub adres IP
+    user: 'xxxxx', // nazwa użytkownika
+    password: 'xxxxx', // hasło użytkownika
+    database: 'xxxxx', // nazwa bazy danych
+    port: 0, // port (domyślnie 3306)
+    rowsAsArray: true // bez zmian
 });
 // Po inicjacji przechodzę do generowania widoków stron
 app.get('/', (req,res) => {
@@ -290,10 +290,10 @@ app.get('/admin_login',(req,res) => {
 /// Autentykacja
 app.post('/auth_admin',[
     check('nazwa_uzytkownika')
-        .equals("admin")
+        .equals("admin") // ustawić nazwę użytkownika dla administratora
         .withMessage('Nieprawidłowa nazwa użytkownika'),
     check('haslo')
-        .equals('7apg#8TtLuK5Zd%t')
+        .equals('xxxxxx') // ustawić hasło
         .withMessage('Nieprawidłowe hasło')
 ],(req,res) => {
     const errors = validationResult(req);
