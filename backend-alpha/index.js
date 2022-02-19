@@ -148,7 +148,18 @@ app.post('/auth_user',[
 app.get('/nowa_rezerwacja',(req,res) => {
     if(req.session.loggedIn)
     {
-        res.render('pages/nowa_rezerwacja');
+        pool.getConnection()
+            .then((conn) => {
+                conn.query('SELECT id_magazynu, nazwa_magazynu FROM magazyny')
+                    .then((rows) => {
+                        res.render('pages/nowa_rezerwacja',{
+                            magazyny: rows
+                        });
+                        conn.end();
+                    })
+                    .catch(err => { console.log(err); conn.end(); });
+            })
+            .catch(err => { console.log(err); });
     }
     else
     {
@@ -158,9 +169,10 @@ app.get('/nowa_rezerwacja',(req,res) => {
 app.post('/api_rowery',(req,res) => {
     start_data = req.body.start_data;
     end_data = req.body.end_data;
+    magazine = req.body.magazine;
     pool.getConnection()
         .then((conn) => {
-            conn.query('SELECT DISTINCT rowery.id_roweru as id_roweru, model, typ_roweru FROM rowery LEFT JOIN wypozyczenia ON rowery.id_roweru = wypozyczenia.id_roweru WHERE ((wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?) AND (wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?)) OR wypozyczenia.id_roweru IS null',[start_data,start_data,end_data,end_data])
+            conn.query('SELECT DISTINCT rowery.id_roweru as id_roweru, model, typ_roweru FROM rowery LEFT JOIN wypozyczenia ON rowery.id_roweru = wypozyczenia.id_roweru WHERE id_magazynu = ? AND (((wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?) AND (wypozyczenia.data_zakonczenia < ? OR wypozyczenia.data_rozpoczecia > ?)) OR wypozyczenia.id_roweru IS null)',[magazine,start_data,start_data,end_data,end_data])
                 .then((rows) => {
                     res.render('pages/ls_rowery',{
                         rowery: rows
@@ -318,11 +330,14 @@ app.get('/admin_dash',(req,res) => {
                                         magazyny_arr = rows;
                                         conn.query('SELECT * FROM rowery')
                                             .then((rows) => {
+                                                error_msg = req.session.error;
+                                                req.session.error = null;
                                                 res.render('pages/admin_dash',{
                                                     wypozyczenia: wypozyczenia_arr,
                                                     magazyny: magazyny_arr,
                                                     aktualnosci: aktualnosci_arr,
-                                                    rowery: rows
+                                                    rowery: rows,
+                                                    error: error_msg
                                                 });
                                                 conn.end();
                                             })
@@ -617,8 +632,16 @@ app.get('/usun_magazyn/:id',(req,res) => {
                         res.redirect('/admin_dash');
                     })
                     .catch(err => {
-                        console.log(err);
-                        conn.end();
+                        if(err.sqlState == 23000)
+                        {
+                            req.session.error = 'Istnieją powiązane rowery z magazynem numer '+req.params.id+'! Przenieś je do innego magazynu!';
+                            res.redirect('/admin_dash');
+                        }
+                        else
+                        {
+                            console.log(err);
+                            conn.end();
+                        }
                     })
             })
             .catch(err => { console.log(err); });
@@ -742,8 +765,16 @@ app.get('/usun_rower/:id',(req,res) => {
                         res.redirect('/admin_dash');
                     })
                     .catch(err => {
-                        console.log(err);
-                        conn.end();
+                        if(err.sqlState == 23000)
+                        {
+                            req.session.error = 'Istnieją powiązane wypożyczenia z rowerem numer '+req.params.id+'!';
+                            res.redirect('/admin_dash');
+                        }
+                        else
+                        {
+                            console.log(err);
+                            conn.end();
+                        }
                     })
             })
             .catch(err => { console.log(err); });

@@ -102,9 +102,11 @@ $(document).ready(function() {
 			<a href="/admin_logout" class="button_submit_red">Wyloguj</a>
 			<a href="/raport" class="button_submit_orange">Raport</a>
 		</div>
+		<% if(error != null) { %>
+			<p style="color:red;"><b><%= error %></b></p>
+		<% } %>
 	
 	<div id="admincontainter">
-			
 		<h4>Wypożyczenia</h4>
 		<table style="width: 100%">
 			<thead>

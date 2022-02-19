@@ -96,6 +96,13 @@ $(document).ready(function() {
 				<input class="inputbox" type="datetime-local" id="datepicker1" name="data_start" required/>
 				<p>Koniec rezerwacji</p>
 				<input class="inputbox" type="datetime-local" id="datepicker2" name="data_koniec" required/>
+				<p>Z którego magazynu chcesz wypożyczyć rower?</p>
+				<select class="inputbox" name="magazyny" id="magazyny" required>
+					<option value="">Wybierz magazyn...</option>
+					<% magazyny.forEach((magazyn) => { %>
+						<option value="<%= magazyn[0] %>"><%= magazyn[1] %></option>
+					<% }) %>
+				</select>
 				<p>Rowery</p>
 				<select class="inputbox" name="rower" id="rower" required></select>
 				<p>Cennik</p>
@@ -142,10 +149,11 @@ $(document).ready(function() {
 </body>
 	<script>
 		$(document).ready(() => {
-			$('#datepicker2').on('change',() => {
+			$('#magazyny').on('change',() => {
 				var start_data = $('#datepicker1').val();
 				var end_data = $('#datepicker2').val();
-				var data = {start_data: start_data, end_data: end_data};
+				var magazine = $('#magazyny').val();
+				var data = {start_data: start_data, end_data: end_data, magazine: magazine};
 				fetch("/api_rowery",{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json'},
